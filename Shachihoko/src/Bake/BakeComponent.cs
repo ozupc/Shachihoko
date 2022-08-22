@@ -17,7 +17,7 @@ using Rhino.Render;
 // folder in Grasshopper.
 // You can use the _GrasshopperDeveloperSettings Rhino command for that.
 
-namespace Export
+namespace Shachihoko
 {
     public class BakeComponent : GH_Component
     {
