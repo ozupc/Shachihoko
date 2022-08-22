@@ -6,13 +6,36 @@
     <Title>Shachihoko</Title>
     <Description>Description of Shachihoko</Description>
     <TargetExt>.gha</TargetExt>
-    <BaseOutputPath>C:\Users\ozuon\AppData\Roaming\Grasshopper\Libraries\Shachihoko</BaseOutputPath>
+    <BaseOutputPath>bulid\</BaseOutputPath>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
     <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0026" />
     <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0026" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="bulid\" />
   </ItemGroup>
   
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">

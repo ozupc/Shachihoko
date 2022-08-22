@@ -24,7 +24,7 @@ using SharpGLTF.Materials;
 using SharpGLTF.Schema2;
 
 
-namespace Shachihoko
+namespace Shachihoko.src.GLTF
 {
     public class MaterialComponent : GH_Component
     {
@@ -38,22 +38,22 @@ namespace Shachihoko
         public MaterialComponent()
           : base("Material", "Material",
             "",
-            "Shachihoko", "Material")
+            "Shachihoko", "GLTF")
         {
         }
 
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            
+
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Material", "Material", "", GH_ParamAccess.tree);
         }
@@ -65,7 +65,7 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-             
+
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Shachihoko
         /// You can add image files to your project resources and access them like this:
         /// return Resources.IconForThisComponent;
         /// </summary>
-        protected override System.Drawing.Bitmap Icon => null;
+        protected override Bitmap Icon => null;
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 

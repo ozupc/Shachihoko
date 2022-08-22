@@ -24,7 +24,7 @@ using SharpGLTF.Materials;
 using SharpGLTF.Schema2;
 
 
-namespace Shachihoko.src
+namespace Shachihoko.src.GLTF
 {
     public class ExportComponent : GH_Component
     {
@@ -38,7 +38,7 @@ namespace Shachihoko.src
         public ExportComponent()
           : base("Export", "Export",
             "",
-            "Shachihoko", "Export")
+            "Shachihoko", "GLTF")
         {
         }
 
