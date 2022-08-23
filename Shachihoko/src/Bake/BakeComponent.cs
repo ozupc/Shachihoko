@@ -29,7 +29,7 @@ namespace Shachihoko
         /// new tabs/panels will automatically be created.
         /// </summary>
         public BakeComponent()
-          : base("Bake", "Bake",
+          : base("Bake", "Bake_test",
               "Bake",
               "Shachihoko", "Bake")
         {
