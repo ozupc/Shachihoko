@@ -24,7 +24,7 @@ using SharpGLTF.Materials;
 using SharpGLTF.Schema2;
 
 
-namespace Shachihoko.src.GLTF
+namespace Shachihoko
 {
     /*public class GLTFTestComponent : GH_Component
     {

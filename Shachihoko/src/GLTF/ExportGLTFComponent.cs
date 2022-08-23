@@ -24,9 +24,9 @@ using SharpGLTF.Materials;
 using SharpGLTF.Schema2;
 
 
-namespace Shachihoko.src.GLTF
+namespace Shachihoko
 {
-    public class ExportComponent : GH_Component
+    public class ExportGLTFComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -35,10 +35,10 @@ namespace Shachihoko.src.GLTF
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public ExportComponent()
+        public ExportGLTFComponent()
           : base("Export", "Export",
             "",
-            "Shachihoko", "GLTF")
+            "Shachihoko", ShachihokoMethod.Category["GLTF"])
         {
         }
 

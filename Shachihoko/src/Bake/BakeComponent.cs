@@ -29,9 +29,9 @@ namespace Shachihoko
         /// new tabs/panels will automatically be created.
         /// </summary>
         public BakeComponent()
-          : base("Bake", "Bake_test",
+          : base("Bake", "Bake",
               "Bake",
-              "Shachihoko", "Bake")
+              "Shachihoko", ShachihokoMethod.Category["Bake"])
         {
         }
 

@@ -15,9 +15,9 @@ using Rhino.Render;
 // folder in Grasshopper.
 // You can use the _GrasshopperDeveloperSettings Rhino command for that.
 
-namespace Export
+namespace Shachihoko
 {
-    public class MaterialComponent : GH_Component
+    public class RhinoMaterialComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -26,10 +26,10 @@ namespace Export
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public MaterialComponent()
+        public RhinoMaterialComponent()
           : base("Material", "Material",
               "Material",
-              "Shachihoko", "Bake")
+              "Shachihoko", ShachihokoMethod.Category["Bake"])
         {
         }
 
@@ -369,7 +369,7 @@ namespace Export
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.material;
+                return Shachihoko.Properties.Resources.rhinoMaterial;
             }
         }
 

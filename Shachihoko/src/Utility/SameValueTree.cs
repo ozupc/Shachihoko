@@ -13,7 +13,7 @@ using Rhino.DocObjects;
 // folder in Grasshopper.
 // You can use the _GrasshopperDeveloperSettings Rhino command for that.
 
-namespace Export
+namespace Shachihoko
 {
     public class SameValueTree : GH_Component
     {
@@ -27,7 +27,7 @@ namespace Export
         public SameValueTree()
           : base("SameValueTree", "SameValueTree",
               "SameValueTree",
-              "Shachihoko", "Utility")
+              "Shachihoko", ShachihokoMethod.Category["Utility"])
         {
         }
 

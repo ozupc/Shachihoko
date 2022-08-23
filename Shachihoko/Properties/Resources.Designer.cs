@@ -73,9 +73,9 @@ namespace Shachihoko.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap material {
+        internal static System.Drawing.Bitmap rhinoMaterial {
             get {
-                object obj = ResourceManager.GetObject("material", resourceCulture);
+                object obj = ResourceManager.GetObject("rhinoMaterial", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
