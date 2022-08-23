@@ -17,7 +17,7 @@ using Rhino.Render;
 
 namespace Shachihoko
 {
-    public class RhinoMaterialComponent : GH_Component
+    public class MaterialForRhinoComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -26,7 +26,7 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public RhinoMaterialComponent()
+        public MaterialForRhinoComponent()
           : base("Material", "Material",
               "Material",
               "Shachihoko", ShachihokoMethod.Category["Bake"])
