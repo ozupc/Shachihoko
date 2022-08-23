@@ -47,7 +47,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-
+            //pManager.AddGenericParameter("")
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
+            MaterialBuilder materialBuilder = new MaterialBuilder("");
         }
 
         /// <summary>
