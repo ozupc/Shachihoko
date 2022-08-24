@@ -53,12 +53,10 @@ namespace Shachihoko
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGeometryParameter("Mesh", "Mesh", "", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Material", "Naterial", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Material", "Material", "", GH_ParamAccess.tree);
             pManager.AddTextParameter("FolderPath", "FolderPath", "", GH_ParamAccess.item, "D:\\デスクトップ");
             pManager.AddTextParameter("FileName", "FileName", "", GH_ParamAccess.item, "model");
             pManager.AddBooleanParameter("Switch", "Switch", "", GH_ParamAccess.item, false);
-
-            pManager[1].Optional = true;
         }
 
         /// <summary>
@@ -77,41 +75,39 @@ namespace Shachihoko
         {
 
             //---<初期化＆定義>---//
-            GH_Structure<IGH_GeometricGoo> ghMeshs_IGH_GeometricGoo = new GH_Structure<IGH_GeometricGoo>();
-            //GLTF_Material gltfMaterials_IGH_Goo = new GLTF_Material(); 
+            GH_Structure<IGH_GeometricGoo> ghMeshs_IGH_GeometricGoos = new GH_Structure<IGH_GeometricGoo>();
+            GH_Structure<IGH_Goo> materialBuilders_IGH_Goo = new GH_Structure<IGH_Goo>(); 
             string folderPath = "";
             string fileName = "";
             string filePath = "";
             bool runSwitch = false;
 
             List<Rhino.Geometry.Mesh> ghMeshs = new List<Rhino.Geometry.Mesh>(); //一時保管用.
+            List<MaterialBuilder> materialBuilders = new List<MaterialBuilder>(); //一時保管用.
             GH_Path path = new GH_Path();
 
             DataTree<VERTEX> vertexs = new DataTree<VERTEX>();
             List<MeshBuilder<VERTEX>> meshBuilders = new List<MeshBuilder<VERTEX>>();
             int num = 0;
 
-            if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoo)) return;
-            //DA.GetDataTree(1, out gltfMaterials_IGH_Goo);
+            if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
+            if (!DA.GetDataTree(1, out materialBuilders_IGH_Goo)) return;
             if (!DA.GetData(2, ref folderPath)) return;
             if (!DA.GetData(3, ref fileName)) return;
             if (!DA.GetData(4, ref runSwitch)) return;
 
             filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
 
-            //---<materialの定義>---//
-            MaterialBuilder material = new MaterialBuilder();
-            material.WithDoubleSide(true);
-            material.WithMetallicRoughnessShader();
-            material.WithChannelParam(KnownChannel.BaseColor, KnownProperty.RGBA, new Vector4(1, 0, 0, 1));
-
             //---<実行>---//
-            for (int i = 0; i < ghMeshs_IGH_GeometricGoo.Paths.Count; i++)
+            for (int i = 0; i < ghMeshs_IGH_GeometricGoos.Paths.Count; i++)
             {
-                path = ghMeshs_IGH_GeometricGoo.Paths[i]; //pathを定義.
+                path = ghMeshs_IGH_GeometricGoos.Paths[i]; //pathを定義.
 
                 //---<IGH_GeometricGooをGHMeshに変換>---//
-                ghMeshs = ghMeshs_IGH_GeometricGoo[path].ConvertAll(ConvertIGH_GeometricGooToGHMesh);
+                ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(ConvertIGH_GeometricGooToGHMesh);
+
+                //---<IGH_GooをMaterialBuilderに変換>---//
+                materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(ConvertIGH_GooToMaterialBuilder);
 
                 foreach (Rhino.Geometry.Mesh ghMesh in ghMeshs)
                 {
@@ -119,7 +115,7 @@ namespace Shachihoko
                     vertexs = ConvertGHMeshVertex(ghMesh);
 
                     //---<MeshBuilderを作成>---//
-                    MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, material, num.ToString());
+                    MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[i], num.ToString());
                     num += 1;
                     meshBuilders.Add(meshBuilder);
                 }
@@ -142,6 +138,17 @@ namespace Shachihoko
             igh_GeometricGoo.CastTo(out mesh);
 
             return mesh;
+        }
+
+        /// <summary>
+        /// IGH_GooをMaterialBuilderに変換.
+        /// </summary>
+        private MaterialBuilder ConvertIGH_GooToMaterialBuilder(IGH_Goo igh_Goo) //Convertの方法を定義.（ConvertAllで使用.）
+        {
+            MaterialBuilder materialBuilder = new MaterialBuilder();
+            igh_Goo.CastTo(out materialBuilder);
+
+            return materialBuilder;
         }
 
         ///<summary>

@@ -80,7 +80,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Material", "Material", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Material", "Material", "", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -90,9 +90,57 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            //---<初期化>---//
             MaterialBuilder materialBuilder = new MaterialBuilder("");
-            materialBuilder.WithMetallicRoughnessShader();
-            materialBuilder.WithSpecularGlossinessShader();
+            Vector4 normal = new Vector4();
+            Vector4 occlussion = new Vector4();
+            Vector4 emissive = new Vector4();
+
+            //---<Shader別>---//
+            if(ShaderType == 0)
+            {
+                //--<初期化>--//
+                Vector4 baseColor = new Vector4();
+                Vector4 metallicRoughness = new Vector4();
+
+                if (!DA.GetData(0, ref normal)) return;
+                if (!DA.GetData(1, ref occlussion)) return;
+                if (!DA.GetData(2, ref emissive)) return;
+                if (!DA.GetData(3, ref baseColor)) return;
+                if (!DA.GetData(4, ref metallicRoughness)) return;
+
+                //--<MaterialBuilderの設定>--//
+                materialBuilder.WithDoubleSide(true);
+                materialBuilder.WithMetallicRoughnessShader();
+                materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal.X);
+                materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion.X);
+                materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, new Vector3(emissive.X, emissive.Y, emissive.Z));
+                materialBuilder.WithChannelParam(KnownChannel.BaseColor, KnownProperty.RGBA, baseColor);
+                materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.MetallicFactor, metallicRoughness.X);
+                materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.RoughnessFactor, metallicRoughness.Y);
+            }
+            else if(ShaderType == 1)
+            {
+                //--<初期化>--//
+                Vector4 diffuse = new Vector4();
+                Vector4 specularGlossiness = new Vector4();
+
+                if (!DA.GetData(0, ref normal)) return;
+                if (!DA.GetData(1, ref occlussion)) return;
+                if (!DA.GetData(2, ref emissive)) return;
+                if (!DA.GetData(3, ref diffuse)) return;
+                if (!DA.GetData(4, ref specularGlossiness)) return;
+
+                //--<MaterialBuilderの設定>--//
+                materialBuilder.WithDoubleSide(true);
+                materialBuilder.WithMetallicRoughnessShader();
+                materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal);
+                materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion);
+                materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, emissive);
+                materialBuilder.WithChannelParam(KnownChannel.Diffuse, KnownProperty.RGBA, diffuse);
+                materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.GlossinessFactor, specularGlossiness);
+            }
+            DA.SetData(0, materialBuilder);
         }
 
         //---<プロパティ>---//
