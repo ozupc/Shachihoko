@@ -45,7 +45,7 @@ namespace Shachihoko
             base.Layout();
 
             Rectangle base_Rec = GH_Convert.ToRectangle(Bounds); /*余白をRectangleに変更し編集できるように*/
-            base_Rec.Height += 62;
+            base_Rec.Height += 42;
             base_Rec.Width = 62;
 
             int button_width = base_Rec.Width - 2;
@@ -55,14 +55,14 @@ namespace Shachihoko
             button0_Rec.Height = 20;
             button0_Rec.Width = button_width;
             button0_Rec.X = base_Rec.Left + 1;
-            button0_Rec.Y = base_Rec.Bottom - 61;
+            button0_Rec.Y = base_Rec.Bottom - 41;
             button0_Rec.Inflate(-1, -1);
 
             Rectangle button1_Rec = base_Rec;
             button1_Rec.Height = 20;
             button1_Rec.Width = button_width;
-            button1_Rec.X = button0_Rec.Right + 1;
-            button1_Rec.Y = base_Rec.Bottom - 61;
+            button1_Rec.X = button0_Rec.Left + 1;
+            button1_Rec.Y = base_Rec.Bottom - 21;
             button1_Rec.Inflate(-1, -1);
 
             Bounds = base_Rec;

@@ -42,6 +42,11 @@ namespace Shachihoko
         {
         }
 
+        public override GH_Exposure Exposure
+        {
+            get { return GH_Exposure.secondary; }
+        }
+
         public override void CreateAttributes()
         {
             m_attributes = new MaterialForGLTFAttribute(this);
