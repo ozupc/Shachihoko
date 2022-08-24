@@ -34,11 +34,11 @@ namespace Shachihoko
 
         }
 
-        private Rectangle button0_Bounds { get; set; }
-        private Rectangle button1_Bounds { get; set; }
+        private Rectangle metallicRoughnessButton_Bounds { get; set; }
+        private Rectangle specularGlossinessButton_Bounds { get; set; }
 
-        private GH_Capsule button0 { get; set; }
-        private GH_Capsule button1 { get; set; }
+        private GH_Capsule metallicRoughnessButton { get; set; }
+        private GH_Capsule specularGlossinessButton { get; set; }
 
         protected override void Layout()
         {
@@ -46,28 +46,28 @@ namespace Shachihoko
 
             Rectangle base_Rec = GH_Convert.ToRectangle(Bounds); /*余白をRectangleに変更し編集できるように*/
             base_Rec.Height += 42;
-            base_Rec.Width = 62;
+            base_Rec.Width = 102;
 
             int button_width = base_Rec.Width - 2;
 
 
-            Rectangle button0_Rec = base_Rec;
-            button0_Rec.Height = 20;
-            button0_Rec.Width = button_width;
-            button0_Rec.X = base_Rec.Left + 1;
-            button0_Rec.Y = base_Rec.Bottom - 41;
-            button0_Rec.Inflate(-1, -1);
+            Rectangle metallicRoughnessButton_Rec = base_Rec;
+            metallicRoughnessButton_Rec.Height = 20;
+            metallicRoughnessButton_Rec.Width = button_width;
+            metallicRoughnessButton_Rec.X = base_Rec.Left + 1;
+            metallicRoughnessButton_Rec.Y = base_Rec.Bottom - 41;
+            metallicRoughnessButton_Rec.Inflate(-1, -1);
 
-            Rectangle button1_Rec = base_Rec;
-            button1_Rec.Height = 20;
-            button1_Rec.Width = button_width;
-            button1_Rec.X = button0_Rec.Left + 1;
-            button1_Rec.Y = base_Rec.Bottom - 21;
-            button1_Rec.Inflate(-1, -1);
+            Rectangle specularGlossinessButton_Rec = base_Rec;
+            specularGlossinessButton_Rec.Height = 20;
+            specularGlossinessButton_Rec.Width = button_width;
+            specularGlossinessButton_Rec.X = metallicRoughnessButton_Rec.Left + 1;
+            specularGlossinessButton_Rec.Y = base_Rec.Bottom - 21;
+            specularGlossinessButton_Rec.Inflate(-1, -1);
 
             Bounds = base_Rec;
-            button0_Bounds = button0_Rec;
-            button1_Bounds = button1_Rec;
+            metallicRoughnessButton_Bounds = metallicRoughnessButton_Rec;
+            specularGlossinessButton_Bounds = specularGlossinessButton_Rec;
         }
 
         protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
@@ -78,13 +78,13 @@ namespace Shachihoko
                     base.RenderComponentCapsule(canvas, graphics, true, false, false, true, true, true);
                     MaterialForGLTFComponent materialForGLTFComponent = Owner as MaterialForGLTFComponent;
 
-                    button0 = GH_Capsule.CreateTextCapsule(button0_Bounds, button0_Bounds, materialForGLTFComponent.ShaderType == 0 ? GH_Palette.Black : GH_Palette.White, "MetallicRoughness", 2, 0);
-                    button0.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
-                    button0.Dispose();
+                    metallicRoughnessButton = GH_Capsule.CreateTextCapsule(metallicRoughnessButton_Bounds, metallicRoughnessButton_Bounds, materialForGLTFComponent.ShaderType == 0 ? GH_Palette.Black : GH_Palette.White, "MetallicRoughness", 2, 0);
+                    metallicRoughnessButton.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
+                    metallicRoughnessButton.Dispose();
 
-                    button1 = GH_Capsule.CreateTextCapsule(button1_Bounds, button1_Bounds, materialForGLTFComponent.ShaderType == 1 ? GH_Palette.Black : GH_Palette.White, "SpecularGlossiness", 2, 0);
-                    button1.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
-                    button1.Dispose();
+                    specularGlossinessButton = GH_Capsule.CreateTextCapsule(specularGlossinessButton_Bounds, specularGlossinessButton_Bounds, materialForGLTFComponent.ShaderType == 1 ? GH_Palette.Black : GH_Palette.White, "SpecularGlossiness", 2, 0);
+                    specularGlossinessButton.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
+                    specularGlossinessButton.Dispose();
 
                     break;
                 default:
@@ -99,11 +99,10 @@ namespace Shachihoko
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                RectangleF rectangleF_0 = button0_Bounds;
-                RectangleF rectangleF_1 = button1_Bounds;
+                RectangleF metallicRoughness_RectangleF = metallicRoughnessButton_Bounds;
+                RectangleF specularGlossiness_RectangleF = specularGlossinessButton_Bounds;
 
-                ///H///
-                if (rectangleF_0.Contains(e.CanvasLocation))
+                if (metallicRoughness_RectangleF.Contains(e.CanvasLocation))
                 {
                     if (materialForGLTFComponent.ShaderType == 0)
                     {
@@ -184,7 +183,7 @@ namespace Shachihoko
                 }
                 ///
                 ///L///
-                else if (rectangleF_1.Contains(e.CanvasLocation))
+                else if (specularGlossiness_RectangleF.Contains(e.CanvasLocation))
                 {
                     if (materialForGLTFComponent.ShaderType == 1)
                     {

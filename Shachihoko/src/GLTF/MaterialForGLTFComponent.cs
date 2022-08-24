@@ -57,7 +57,22 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            //pManager.AddGenericParameter("")
+            if (ShaderType == 0)
+            {
+                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][0], ComponentName["MetallicRoughness"][0], ComponentDescription["MetallicRoughness"][0], ComponentGH_ParamAccess["MetallicRoughness"][0]);
+                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][1], ComponentName["MetallicRoughness"][1], ComponentDescription["MetallicRoughness"][1], ComponentGH_ParamAccess["MetallicRoughness"][1]);
+                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][2], ComponentName["MetallicRoughness"][2], ComponentDescription["MetallicRoughness"][2], ComponentGH_ParamAccess["MetallicRoughness"][2]);
+                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][3], ComponentName["MetallicRoughness"][3], ComponentDescription["MetallicRoughness"][3], ComponentGH_ParamAccess["MetallicRoughness"][3]);
+                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][4], ComponentName["MetallicRoughness"][4], ComponentDescription["MetallicRoughness"][4], ComponentGH_ParamAccess["MetallicRoughness"][4]);
+            }
+            else if(ShaderType == 1)
+            {
+                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][0], ComponentName["SpecularGlossiness"][0], ComponentDescription["SpecularGlossiness"][0], ComponentGH_ParamAccess["SpecularGlossiness"][0]);
+                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][1], ComponentName["SpecularGlossiness"][1], ComponentDescription["SpecularGlossiness"][1], ComponentGH_ParamAccess["SpecularGlossiness"][1]);
+                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][2], ComponentName["SpecularGlossiness"][2], ComponentDescription["SpecularGlossiness"][2], ComponentGH_ParamAccess["SpecularGlossiness"][2]);
+                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][3], ComponentName["SpecularGlossiness"][3], ComponentDescription["SpecularGlossiness"][3], ComponentGH_ParamAccess["SpecularGlossiness"][3]);
+                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][4], ComponentName["SpecularGlossiness"][4], ComponentDescription["SpecularGlossiness"][4], ComponentGH_ParamAccess["SpecularGlossiness"][4]);
+            }            
         }
 
         /// <summary>
@@ -80,7 +95,85 @@ namespace Shachihoko
             materialBuilder.WithSpecularGlossinessShader();
         }
 
+        //---<プロパティ>---//
+        //--<Shader>--//
+        /// <summary>
+        /// 0 = MetallicRoughnessShader, 1 = SpecularGlossinessShader.
+        /// </summary>
         public int ShaderType { get; set; }
+
+        //--<inputリスト>--//
+        public static readonly Dictionary<string, List<GH_ParamAccess>> ComponentGH_ParamAccess = new Dictionary<string, List<GH_ParamAccess>>
+        {
+            {
+                "MetallicRoughness", new List<GH_ParamAccess>()
+                {
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item
+                }
+            },
+            {
+                "SpecularGlossiness", new List<GH_ParamAccess>()
+                {
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item
+                }
+            }
+        };
+
+        public static readonly Dictionary<string, List<string>> ComponentName = new Dictionary<string, List<string>>
+        {
+            {
+                "MetallicRoughness", new List<string>()
+                {
+                    "Normal",
+                    "Occlussion",
+                    "Emissive",
+                    "BaseColor",
+                    "MetallicRoughness"
+                }
+            },
+            {
+                "SpecularGlossiness", new List<string>()
+                {
+                    "Normal",
+                    "Occlussion",
+                    "Emissive",
+                    "Diffuse",
+                    "SpecularGlossiness"
+                }
+            }
+        };
+
+        public static readonly Dictionary<string, List<string>> ComponentDescription = new Dictionary<string, List<string>>
+        {
+            {
+                "MetallicRoughness", new List<string>()
+                {
+                    "X:Scale.",
+                    "X:Strength.",
+                    "X:Red, Y:Green, Z:Blue.",
+                    "X:Red, Y:Green, Z:Blue, W:Alpha.",
+                    "X:Metallic Factor, Y:Roughness Factor"
+                }
+            },
+            {
+                "SpecularGlossiness", new List<string>()
+                {
+                    "X:Scale.",
+                    "X:Strength.",
+                    "X:Red, Y:Green, Z:Blue.",
+                    "X:Diffuse Red, Y:Diffuse Green, Z:Diffuse Blue, W:Alpha.",
+                    "X:Specular Red, Y:Specular Green, Z:Specular Blue, W:Glossiness."
+                }
+            }
+        };
 
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
