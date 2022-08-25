@@ -126,6 +126,7 @@ namespace Shachihoko
                             input.Name = MaterialForGLTFComponent.ComponentName["MetallicRoughness"][i];
                             input.NickName = MaterialForGLTFComponent.ComponentName["MetallicRoughness"][i];
                             input.Description = MaterialForGLTFComponent.ComponentDescription["MetallicRoughness"][i];
+                            input.Optional = true;
 
                             materialForGLTFComponent.Params.RegisterInputParam(input, i);
                         }
@@ -157,6 +158,7 @@ namespace Shachihoko
                             input.Name = MaterialForGLTFComponent.ComponentName["SpecularGlossiness"][i];
                             input.NickName = MaterialForGLTFComponent.ComponentName["SpecularGlossiness"][i];
                             input.Description = MaterialForGLTFComponent.ComponentDescription["SpecularGlossiness"][i];
+                            input.Optional = true;
 
                             materialForGLTFComponent.Params.RegisterInputParam(input, i);
                         }

@@ -64,6 +64,11 @@ namespace Shachihoko
                 pManager.AddGenericParameter(ComponentName["MetallicRoughness"][2], ComponentName["MetallicRoughness"][2], ComponentDescription["MetallicRoughness"][2], ComponentGH_ParamAccess["MetallicRoughness"][2]);
                 pManager.AddGenericParameter(ComponentName["MetallicRoughness"][3], ComponentName["MetallicRoughness"][3], ComponentDescription["MetallicRoughness"][3], ComponentGH_ParamAccess["MetallicRoughness"][3]);
                 pManager.AddGenericParameter(ComponentName["MetallicRoughness"][4], ComponentName["MetallicRoughness"][4], ComponentDescription["MetallicRoughness"][4], ComponentGH_ParamAccess["MetallicRoughness"][4]);
+                pManager[0].Optional = true;
+                pManager[1].Optional = true;
+                pManager[2].Optional = true;
+                pManager[3].Optional = true;
+                pManager[4].Optional = true;
             }
             else if(ShaderType == 1)
             {
@@ -72,7 +77,13 @@ namespace Shachihoko
                 pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][2], ComponentName["SpecularGlossiness"][2], ComponentDescription["SpecularGlossiness"][2], ComponentGH_ParamAccess["SpecularGlossiness"][2]);
                 pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][3], ComponentName["SpecularGlossiness"][3], ComponentDescription["SpecularGlossiness"][3], ComponentGH_ParamAccess["SpecularGlossiness"][3]);
                 pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][4], ComponentName["SpecularGlossiness"][4], ComponentDescription["SpecularGlossiness"][4], ComponentGH_ParamAccess["SpecularGlossiness"][4]);
-            }            
+                pManager[0].Optional = true;
+                pManager[1].Optional = true;
+                pManager[2].Optional = true;
+                pManager[3].Optional = true;
+                pManager[4].Optional = true;
+            }
+            
         }
 
         /// <summary>
@@ -103,11 +114,11 @@ namespace Shachihoko
                 Vector4 baseColor = new Vector4();
                 Vector4 metallicRoughness = new Vector4();
 
-                if (!DA.GetData(0, ref normal)) return;
-                if (!DA.GetData(1, ref occlussion)) return;
-                if (!DA.GetData(2, ref emissive)) return;
-                if (!DA.GetData(3, ref baseColor)) return;
-                if (!DA.GetData(4, ref metallicRoughness)) return;
+                DA.GetData(0, ref normal);
+                DA.GetData(1, ref occlussion);
+                DA.GetData(2, ref emissive);
+                DA.GetData(3, ref baseColor);
+                DA.GetData(4, ref metallicRoughness);
 
                 //--<MaterialBuilder‚ÌÝ’è>--//
                 materialBuilder.WithDoubleSide(true);
@@ -125,11 +136,11 @@ namespace Shachihoko
                 Vector4 diffuse = new Vector4();
                 Vector4 specularGlossiness = new Vector4();
 
-                if (!DA.GetData(0, ref normal)) return;
-                if (!DA.GetData(1, ref occlussion)) return;
-                if (!DA.GetData(2, ref emissive)) return;
-                if (!DA.GetData(3, ref diffuse)) return;
-                if (!DA.GetData(4, ref specularGlossiness)) return;
+                DA.GetData(0, ref normal);
+                DA.GetData(1, ref occlussion);
+                DA.GetData(2, ref emissive);
+                DA.GetData(3, ref diffuse);
+                DA.GetData(4, ref specularGlossiness);
 
                 //--<MaterialBuilder‚ÌÝ’è>--//
                 materialBuilder.WithDoubleSide(true);
