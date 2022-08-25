@@ -112,8 +112,8 @@ namespace Shachihoko
                 //--<MaterialBuilder‚ÌÝ’è>--//
                 materialBuilder.WithDoubleSide(true);
                 materialBuilder.WithMetallicRoughnessShader();
-                materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal.X);
-                materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion.X);
+                //materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal.X);
+                //materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion.X);
                 materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, new Vector3(emissive.X, emissive.Y, emissive.Z));
                 materialBuilder.WithChannelParam(KnownChannel.BaseColor, KnownProperty.RGBA, baseColor);
                 materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.MetallicFactor, metallicRoughness.X);
@@ -133,12 +133,13 @@ namespace Shachihoko
 
                 //--<MaterialBuilder‚ÌÝ’è>--//
                 materialBuilder.WithDoubleSide(true);
-                materialBuilder.WithMetallicRoughnessShader();
-                materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal);
-                materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion);
-                materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, emissive);
+                materialBuilder.WithSpecularGlossinessShader();
+                //materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal);
+                //materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion);
+                materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, new Vector3(emissive.X, emissive.Y, emissive.Z));
                 materialBuilder.WithChannelParam(KnownChannel.Diffuse, KnownProperty.RGBA, diffuse);
-                materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.GlossinessFactor, specularGlossiness);
+                materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.SpecularFactor, new Vector3(specularGlossiness.X, specularGlossiness.Y, specularGlossiness.Z));
+                materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.GlossinessFactor, specularGlossiness.W);
             }
             DA.SetData(0, materialBuilder);
         }
