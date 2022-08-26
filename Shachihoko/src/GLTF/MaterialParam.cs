@@ -28,6 +28,11 @@ namespace Shachihoko
 {
     internal class MaterialParam
     {
+        public MaterialParam(int paramType)
+        {
+            ParamType = paramType;
+        }
+
         public Vector4 Vector4 { get; set; }
 
         public MemoryImage MemoryImage { get; set; }

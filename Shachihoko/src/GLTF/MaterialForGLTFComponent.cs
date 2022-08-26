@@ -97,9 +97,9 @@ namespace Shachihoko
         {
             //---<初期化>---//
             MaterialBuilder materialBuilder = new MaterialBuilder("");
-            MaterialParam normal = new MaterialParam();
-            MaterialParam occlussion = new MaterialParam();
-            MaterialParam emissive = new MaterialParam();
+            MaterialParam normal = new MaterialParam(1);
+            MaterialParam occlussion = new MaterialParam(2);
+            MaterialParam emissive = new MaterialParam(3);
 
             DA.GetData(0, ref normal);
             DA.GetData(1, ref occlussion);
@@ -107,116 +107,132 @@ namespace Shachihoko
 
             //---<MaterialBuilderの設定>---//
             materialBuilder.WithDoubleSide(true);
+            SetMaterialBuilder(materialBuilder, normal);
+            SetMaterialBuilder(materialBuilder, occlussion);
+            SetMaterialBuilder(materialBuilder, emissive);            
 
-            //--<Normal>--//
-            if (normal.ParamStyle == 0)
-            {
-
-            }
-            else if (normal.ParamStyle == 1)
-            {
-                materialBuilder.WithChannelImage(KnownChannel.Normal, normal.MemoryImage);
-                materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, normal.OptionalNumber);
-            }
-
-            //--<Occlussion>--//
-            if (occlussion.ParamStyle == 0)
-            {
-
-            }
-            else if (occlussion.ParamStyle == 1)
-            {
-                materialBuilder.WithChannelImage(KnownChannel.Occlusion, occlussion.MemoryImage);
-                materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, occlussion.OptionalNumber);
-            }
-
-            //--<Emissive>--//
-            if (emissive.ParamStyle == 0)
-            {
-                materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, new Vector3(emissive.Vector4.X, emissive.Vector4.Y, emissive.Vector4.Z));
-            }
-            else if (emissive.ParamStyle == 1)
-            {
-                materialBuilder.WithChannelImage(KnownChannel.Emissive, emissive.MemoryImage);
-            }
-
-            //---<Shader別>---//
+            //--<Shader別>--//
             if (ShaderType == 0)
             {
-                //--<初期化>--//
-                MaterialParam baseColor = new MaterialParam();
-                MaterialParam metallicRoughness = new MaterialParam();                
+                //-<初期化>-//
+                MaterialParam baseColor = new MaterialParam(4);
+                MaterialParam metallicRoughness = new MaterialParam(5);                
                 
                 DA.GetData(3, ref baseColor);
                 DA.GetData(4, ref metallicRoughness);
 
-                //--<MaterialBuilderの設定>--//
+                //-<MaterialBuilderの設定>-//
                 materialBuilder.WithMetallicRoughnessShader();
-
-                //-<BaseColor>-//
-                if (baseColor.ParamStyle == 0)
-                {
-                    materialBuilder.WithChannelParam(KnownChannel.BaseColor, KnownProperty.RGBA, baseColor.Vector4);
-                }
-                else if (baseColor.ParamStyle == 1)
-                {
-                    materialBuilder.WithChannelImage(KnownChannel.BaseColor, baseColor.MemoryImage);
-                }
-
-                //-<MetallicRoughness>-//
-                if (metallicRoughness.ParamStyle == 0)
-                {
-                    materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.MetallicFactor, metallicRoughness.Vector4.X);
-                    materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.RoughnessFactor, metallicRoughness.Vector4.Y);
-                }
-                else if (metallicRoughness.ParamStyle == 1)
-                {
-                    materialBuilder.WithChannelImage(KnownChannel.MetallicRoughness, metallicRoughness.MemoryImage);
-                }
+                SetMaterialBuilder(materialBuilder, baseColor);
+                SetMaterialBuilder(materialBuilder, metallicRoughness);
             }
             else if(ShaderType == 1)
             {
-                //--<初期化>--//
-                MaterialParam diffuse = new MaterialParam();
-                MaterialParam specularGlossiness = new MaterialParam();
+                //-<初期化>-//
+                MaterialParam diffuse = new MaterialParam(6);
+                MaterialParam specularGlossiness = new MaterialParam(7);
 
                 DA.GetData(3, ref diffuse);
                 DA.GetData(4, ref specularGlossiness);
 
-                //--<MaterialBuilderの設定>--//
+                //-<MaterialBuilderの設定>-//
                 materialBuilder.WithSpecularGlossinessShader();
-
-                //-<Diffuse>-//
-                if (diffuse.ParamStyle == 0)
-                {
-                    materialBuilder.WithChannelParam(KnownChannel.Diffuse, KnownProperty.RGBA, diffuse.Vector4);
-                }
-                else if (diffuse.ParamStyle == 1)
-                {
-                    materialBuilder.WithChannelImage(KnownChannel.Diffuse, diffuse.MemoryImage);
-                }
-
-                //-<SpecularGlossiness>-//
-                if (specularGlossiness.ParamStyle == 0)
-                {
-                    materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.SpecularFactor, new Vector3(specularGlossiness.Vector4.X, specularGlossiness.Vector4.Y, specularGlossiness.Vector4.Z));
-                    materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.GlossinessFactor, specularGlossiness.Vector4.W);
-                }
-                else if (specularGlossiness.ParamStyle == 1)
-                {
-                    materialBuilder.WithChannelImage(KnownChannel.SpecularGlossiness, specularGlossiness.MemoryImage);
-                }               
+                SetMaterialBuilder(materialBuilder, diffuse);
+                SetMaterialBuilder(materialBuilder, specularGlossiness);
             }
+            //---<SetData>---//
             DA.SetData(0, materialBuilder);
         }
 
         //---<メソッド>---//
-        private MaterialBuilder SetMaterialBuilder(MaterialBuilder materialBuilder, MaterialParam materialParam, int ShaderType)
+        /// <summary>
+        /// MaterialBuilderにパラメータを設定する.
+        /// </summary>
+        private void SetMaterialBuilder(MaterialBuilder materialBuilder, MaterialParam materialParam)
         {
+            switch (materialParam.ParamType)
+            {
+                case (0): //Normal
+                    if (materialParam.ParamStyle == 0)
+                    {
 
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.Normal, materialParam.MemoryImage);
+                        materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, materialParam.OptionalNumber);
+                    }
+                    break;
 
+                case (1): //Occlussion
+                    if (materialParam.ParamStyle == 0)
+                    {
 
-            return materialBuilder;
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.Occlusion, materialParam.MemoryImage);
+                        materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, materialParam.OptionalNumber);
+                    }
+                    break;
+
+                case (2): //Emmisive
+                    if (materialParam.ParamStyle == 0)
+                    {
+                        materialBuilder.WithChannelParam(KnownChannel.Emissive, KnownProperty.RGB, new Vector3(materialParam.Vector4.X, materialParam.Vector4.Y, materialParam.Vector4.Z));
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.Emissive, materialParam.MemoryImage);
+                    }
+                    break;
+
+                case (3): //BaseColor
+                    if (materialParam.ParamStyle == 0)
+                    {
+                        materialBuilder.WithChannelParam(KnownChannel.BaseColor, KnownProperty.RGBA, materialParam.Vector4);
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.BaseColor, materialParam.MemoryImage);
+                    }
+                    break;
+
+                case (4): //MetallicRoughness
+                    if (materialParam.ParamStyle == 0)
+                    {
+                        materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.MetallicFactor, materialParam.Vector4.X);
+                        materialBuilder.WithChannelParam(KnownChannel.MetallicRoughness, KnownProperty.RoughnessFactor, materialParam.Vector4.Y);
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.MetallicRoughness, materialParam.MemoryImage);
+                    }
+                    break;
+
+                case (5): //Diffuse
+                    if (materialParam.ParamStyle == 0)
+                    {
+                        materialBuilder.WithChannelParam(KnownChannel.Diffuse, KnownProperty.RGBA, materialParam.Vector4);
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.Diffuse, materialParam.MemoryImage);
+                    }
+                    break;
+
+                case (6): //SpecularGlossiness
+                    if (materialParam.ParamStyle == 0)
+                    {
+                        materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.SpecularFactor, new Vector3(materialParam.Vector4.X, materialParam.Vector4.Y, materialParam.Vector4.Z));
+                        materialBuilder.WithChannelParam(KnownChannel.SpecularGlossiness, KnownProperty.GlossinessFactor, materialParam.Vector4.W);
+                    }
+                    else if (materialParam.ParamStyle == 1)
+                    {
+                        materialBuilder.WithChannelImage(KnownChannel.SpecularGlossiness, materialParam.MemoryImage);
+                    }
+                    break;
+            }
         }
 
         //---<プロパティ>---//
