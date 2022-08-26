@@ -109,7 +109,7 @@ namespace Shachihoko
 
                 //--<‘ã“ü>--//
                 materialParam.Vector4 = vector4;
-                materialParam.ParamType = 0;
+                materialParam.ParamStyle = 0;
 
             }
             else if(ParamType == 1)
@@ -126,7 +126,7 @@ namespace Shachihoko
                 //--<‘ã“ü>--//
                 materialParam.MemoryImage = memoryImage;
                 materialParam.OptionalNumber = (float)optinalNum;
-                materialParam.ParamType = 1;
+                materialParam.ParamStyle = 1;
             }
             //---<SetData>---//
             DA.SetData(0, materialParam);

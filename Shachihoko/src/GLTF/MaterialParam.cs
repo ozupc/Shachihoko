@@ -30,10 +30,21 @@ namespace Shachihoko
     {
         public Vector4 Vector4 { get; set; }
 
-        public MemoryImage MemoryImage { get; set; } 
+        public MemoryImage MemoryImage { get; set; }
 
+        /// <summary>
+        /// Normal要素のScaleやOcclusion要素のStrengthで使用する.
+        /// </summary>
         public float OptionalNumber { get; set; }
 
+        /// <summary>
+        /// 0 = Vector4, 1 = Image.
+        /// </summary>
+        public int ParamStyle { get; set; }
+
+        /// <summary>
+        /// 0 = Normal, 1 = Occlusion, 2 = Emissive, 3 = BaseColor, 4 = MetallicRoughness, 5 = Diffuse, 6 = SpecularGlossiness.
+        /// </summary>
         public int ParamType { get; set; }
     }
 }
