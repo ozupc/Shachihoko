@@ -126,7 +126,7 @@ namespace Shachihoko
                             input.Name = MaterialParamComponent.ComponentName["Vector4"][i];
                             input.NickName = MaterialParamComponent.ComponentName["Vector4"][i];
                             input.Description = MaterialParamComponent.ComponentDescription["Vector4"][i];
-                            input.SetPersistentData(MaterialParamComponent.Default["Vector4"][i]);
+                            input.SetPersistentData(MaterialParamComponent.ComponentDefault["Vector4"][i]);
 
                         materialParam.Params.RegisterInputParam(input, i);
                         }

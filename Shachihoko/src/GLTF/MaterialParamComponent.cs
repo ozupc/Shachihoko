@@ -60,15 +60,15 @@ namespace Shachihoko
         {
             if (ParamType == 0)
             {
-                pManager.AddGenericParameter(ComponentName["Vector4"][0], ComponentName["Vector4"][0], ComponentDescription["Vector4"][0], ComponentGH_ParamAccess["Vector4"][0]);
-                pManager.AddGenericParameter(ComponentName["Vector4"][1], ComponentName["Vector4"][1], ComponentDescription["Vector4"][1], ComponentGH_ParamAccess["Vector4"][1]);
-                pManager.AddGenericParameter(ComponentName["Vector4"][2], ComponentName["Vector4"][2], ComponentDescription["Vector4"][2], ComponentGH_ParamAccess["Vector4"][2]);
-                pManager.AddGenericParameter(ComponentName["Vector4"][3], ComponentName["Vector4"][3], ComponentDescription["Vector4"][3], ComponentGH_ParamAccess["Vector4"][3]);
+                pManager.AddNumberParameter(ComponentName["Vector4"][0], ComponentName["Vector4"][0], ComponentDescription["Vector4"][0], ComponentGH_ParamAccess["Vector4"][0], ComponentDefault["Vector4"][0]);
+                pManager.AddNumberParameter(ComponentName["Vector4"][1], ComponentName["Vector4"][1], ComponentDescription["Vector4"][1], ComponentGH_ParamAccess["Vector4"][1], ComponentDefault["Vector4"][1]);
+                pManager.AddNumberParameter(ComponentName["Vector4"][2], ComponentName["Vector4"][2], ComponentDescription["Vector4"][2], ComponentGH_ParamAccess["Vector4"][2], ComponentDefault["Vector4"][2]);
+                pManager.AddNumberParameter(ComponentName["Vector4"][3], ComponentName["Vector4"][3], ComponentDescription["Vector4"][3], ComponentGH_ParamAccess["Vector4"][3], ComponentDefault["Vector4"][3]);
             }
             else if(ParamType == 1)
             {
                 pManager.AddGenericParameter(ComponentName["Image"][0], ComponentName["Image"][0], ComponentDescription["Image"][0], ComponentGH_ParamAccess["Image"][0]);
-                pManager.AddGenericParameter(ComponentName["Image"][1], ComponentName["Image"][1], ComponentDescription["Image"][1], ComponentGH_ParamAccess["Image"][1]);
+                pManager.AddNumberParameter(ComponentName["Image"][1], ComponentName["Image"][1], ComponentDescription["Image"][1], ComponentGH_ParamAccess["Image"][1], 1.0);
             }
         }
 
@@ -200,7 +200,7 @@ namespace Shachihoko
             }
         };
 
-        public static readonly Dictionary<string, List<double>> Default = new Dictionary<string, List<double>>
+        public static readonly Dictionary<string, List<double>> ComponentDefault = new Dictionary<string, List<double>>
         {
             {
                 "Vector4", new List<double>()

@@ -101,15 +101,20 @@ namespace Shachihoko
             MaterialParam occlussion = new MaterialParam(2);
             MaterialParam emissive = new MaterialParam(3);
 
-            DA.GetData(0, ref normal);
-            DA.GetData(1, ref occlussion);
-            DA.GetData(2, ref emissive);
-
             //---<MaterialBuilder‚ÌÝ’è>---//
             materialBuilder.WithDoubleSide(true);
-            SetMaterialBuilder(materialBuilder, normal);
-            SetMaterialBuilder(materialBuilder, occlussion);
-            SetMaterialBuilder(materialBuilder, emissive);            
+            if (DA.GetData(0, ref normal))
+            {
+                SetMaterialBuilder(materialBuilder, normal);
+            }
+            if (DA.GetData(1, ref occlussion))
+            {
+                SetMaterialBuilder(materialBuilder, occlussion);
+            }
+            if (DA.GetData(2, ref emissive))
+            {
+                SetMaterialBuilder(materialBuilder, emissive);
+            }
 
             //--<Shader•Ê>--//
             if (ShaderType == 0)
@@ -117,14 +122,18 @@ namespace Shachihoko
                 //-<‰Šú‰»>-//
                 MaterialParam baseColor = new MaterialParam(4);
                 MaterialParam metallicRoughness = new MaterialParam(5);                
-                
-                DA.GetData(3, ref baseColor);
-                DA.GetData(4, ref metallicRoughness);
 
                 //-<MaterialBuilder‚ÌÝ’è>-//
                 materialBuilder.WithMetallicRoughnessShader();
-                SetMaterialBuilder(materialBuilder, baseColor);
-                SetMaterialBuilder(materialBuilder, metallicRoughness);
+                if (DA.GetData(3, ref baseColor))
+                {
+                    SetMaterialBuilder(materialBuilder, baseColor);
+
+                }
+                if (DA.GetData(4, ref metallicRoughness))
+                {
+                    SetMaterialBuilder(materialBuilder, metallicRoughness);
+                }
             }
             else if(ShaderType == 1)
             {
@@ -132,13 +141,16 @@ namespace Shachihoko
                 MaterialParam diffuse = new MaterialParam(6);
                 MaterialParam specularGlossiness = new MaterialParam(7);
 
-                DA.GetData(3, ref diffuse);
-                DA.GetData(4, ref specularGlossiness);
-
                 //-<MaterialBuilder‚ÌÝ’è>-//
                 materialBuilder.WithSpecularGlossinessShader();
-                SetMaterialBuilder(materialBuilder, diffuse);
-                SetMaterialBuilder(materialBuilder, specularGlossiness);
+                if (DA.GetData(3, ref diffuse))
+                {
+                    SetMaterialBuilder(materialBuilder, diffuse);
+                }
+                if (DA.GetData(4, ref specularGlossiness))
+                {
+                    SetMaterialBuilder(materialBuilder, specularGlossiness);
+                }
             }
             //---<SetData>---//
             DA.SetData(0, materialBuilder);
