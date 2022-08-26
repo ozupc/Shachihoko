@@ -81,11 +81,11 @@ namespace Shachihoko
                     base.RenderComponentCapsule(canvas, graphics, true, false, false, true, true, true);
                     MaterialForGLTFComponent materialForGLTFComponent = Owner as MaterialForGLTFComponent;
 
-                    metallicRoughnessButton = GH_Capsule.CreateTextCapsule(metallicRoughnessButton_Bounds, metallicRoughnessButton_Bounds, materialForGLTFComponent.ShaderType == 0 ? GH_Palette.Black : GH_Palette.White, "MetallicRoughnessShader", 2, 0);
+                    metallicRoughnessButton = GH_Capsule.CreateTextCapsule(metallicRoughnessButton_Bounds, metallicRoughnessButton_Bounds, materialForGLTFComponent.ShaderType == 0 ? GH_Palette.Black : GH_Palette.Normal, "MetallicRoughnessShader", 2, 0);
                     metallicRoughnessButton.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
                     metallicRoughnessButton.Dispose();
 
-                    specularGlossinessButton = GH_Capsule.CreateTextCapsule(specularGlossinessButton_Bounds, specularGlossinessButton_Bounds, materialForGLTFComponent.ShaderType == 1 ? GH_Palette.Black : GH_Palette.White, "SpecularGlossinessShader", 2, 0);
+                    specularGlossinessButton = GH_Capsule.CreateTextCapsule(specularGlossinessButton_Bounds, specularGlossinessButton_Bounds, materialForGLTFComponent.ShaderType == 1 ? GH_Palette.Black : GH_Palette.Normal, "SpecularGlossinessShader", 2, 0);
                     specularGlossinessButton.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
                     specularGlossinessButton.Dispose();
 

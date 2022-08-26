@@ -97,22 +97,25 @@ namespace Shachihoko
         {
             //---<‰Šú‰»>---//
             MaterialBuilder materialBuilder = new MaterialBuilder("");
-            MaterialParam normal = new MaterialParam(1);
-            MaterialParam occlussion = new MaterialParam(2);
-            MaterialParam emissive = new MaterialParam(3);
+            MaterialParam normal = new MaterialParam();
+            MaterialParam occlussion = new MaterialParam();
+            MaterialParam emissive = new MaterialParam();
 
             //---<MaterialBuilder‚ÌÝ’è>---//
             materialBuilder.WithDoubleSide(true);
             if (DA.GetData(0, ref normal))
             {
+                normal.ParamType = 0;
                 SetMaterialBuilder(materialBuilder, normal);
             }
             if (DA.GetData(1, ref occlussion))
             {
+                occlussion.ParamType = 1;
                 SetMaterialBuilder(materialBuilder, occlussion);
             }
             if (DA.GetData(2, ref emissive))
             {
+                emissive.ParamType = 2;
                 SetMaterialBuilder(materialBuilder, emissive);
             }
 
@@ -120,35 +123,38 @@ namespace Shachihoko
             if (ShaderType == 0)
             {
                 //-<‰Šú‰»>-//
-                MaterialParam baseColor = new MaterialParam(4);
-                MaterialParam metallicRoughness = new MaterialParam(5);                
+                MaterialParam baseColor = new MaterialParam();
+                MaterialParam metallicRoughness = new MaterialParam();                
 
                 //-<MaterialBuilder‚ÌÝ’è>-//
                 materialBuilder.WithMetallicRoughnessShader();
                 if (DA.GetData(3, ref baseColor))
                 {
+                    baseColor.ParamType = 3;
                     SetMaterialBuilder(materialBuilder, baseColor);
-
                 }
                 if (DA.GetData(4, ref metallicRoughness))
                 {
+                    metallicRoughness.ParamType = 4;
                     SetMaterialBuilder(materialBuilder, metallicRoughness);
                 }
             }
             else if(ShaderType == 1)
             {
                 //-<‰Šú‰»>-//
-                MaterialParam diffuse = new MaterialParam(6);
-                MaterialParam specularGlossiness = new MaterialParam(7);
+                MaterialParam diffuse = new MaterialParam();
+                MaterialParam specularGlossiness = new MaterialParam();
 
                 //-<MaterialBuilder‚ÌÝ’è>-//
                 materialBuilder.WithSpecularGlossinessShader();
                 if (DA.GetData(3, ref diffuse))
                 {
+                    diffuse.ParamType = 5;
                     SetMaterialBuilder(materialBuilder, diffuse);
                 }
                 if (DA.GetData(4, ref specularGlossiness))
                 {
+                    specularGlossiness.ParamType = 6;
                     SetMaterialBuilder(materialBuilder, specularGlossiness);
                 }
             }
@@ -175,7 +181,6 @@ namespace Shachihoko
                         materialBuilder.WithChannelParam(KnownChannel.Normal, KnownProperty.NormalScale, materialParam.OptionalNumber);
                     }
                     break;
-
                 case (1): //Occlussion
                     if (materialParam.ParamStyle == 0)
                     {
@@ -187,7 +192,6 @@ namespace Shachihoko
                         materialBuilder.WithChannelParam(KnownChannel.Occlusion, KnownProperty.OcclusionStrength, materialParam.OptionalNumber);
                     }
                     break;
-
                 case (2): //Emmisive
                     if (materialParam.ParamStyle == 0)
                     {
@@ -198,7 +202,6 @@ namespace Shachihoko
                         materialBuilder.WithChannelImage(KnownChannel.Emissive, materialParam.MemoryImage);
                     }
                     break;
-
                 case (3): //BaseColor
                     if (materialParam.ParamStyle == 0)
                     {
@@ -209,7 +212,6 @@ namespace Shachihoko
                         materialBuilder.WithChannelImage(KnownChannel.BaseColor, materialParam.MemoryImage);
                     }
                     break;
-
                 case (4): //MetallicRoughness
                     if (materialParam.ParamStyle == 0)
                     {
@@ -221,7 +223,6 @@ namespace Shachihoko
                         materialBuilder.WithChannelImage(KnownChannel.MetallicRoughness, materialParam.MemoryImage);
                     }
                     break;
-
                 case (5): //Diffuse
                     if (materialParam.ParamStyle == 0)
                     {
@@ -232,7 +233,6 @@ namespace Shachihoko
                         materialBuilder.WithChannelImage(KnownChannel.Diffuse, materialParam.MemoryImage);
                     }
                     break;
-
                 case (6): //SpecularGlossiness
                     if (materialParam.ParamStyle == 0)
                     {
@@ -243,6 +243,8 @@ namespace Shachihoko
                     {
                         materialBuilder.WithChannelImage(KnownChannel.SpecularGlossiness, materialParam.MemoryImage);
                     }
+                    break;
+                default:
                     break;
             }
         }

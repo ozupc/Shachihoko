@@ -81,11 +81,11 @@ namespace Shachihoko
                     base.RenderComponentCapsule(canvas, graphics, true, false, false, true, true, true);
                     MaterialParamComponent materialParam = Owner as MaterialParamComponent;
 
-                    vector4Button = GH_Capsule.CreateTextCapsule(vector4Button_Bounds, vector4Button_Bounds, materialParam.ParamType == 0 ? GH_Palette.Black : GH_Palette.White, "Vector4", 2, 0);
+                    vector4Button = GH_Capsule.CreateTextCapsule(vector4Button_Bounds, vector4Button_Bounds, materialParam.ParamType == 0 ? GH_Palette.Black : GH_Palette.Normal, "Vector4", 2, 0);
                     vector4Button.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
                     vector4Button.Dispose();
 
-                    imageButton = GH_Capsule.CreateTextCapsule(imageButton_Bounds, imageButton_Bounds, materialParam.ParamType == 1 ? GH_Palette.Black : GH_Palette.White, "Image", 2, 0);
+                    imageButton = GH_Capsule.CreateTextCapsule(imageButton_Bounds, imageButton_Bounds, materialParam.ParamType == 1 ? GH_Palette.Black : GH_Palette.Normal, "Image", 2, 0);
                     imageButton.Render(graphics, this.Selected, Owner.Locked, Owner.Hidden);
                     imageButton.Dispose();
 
