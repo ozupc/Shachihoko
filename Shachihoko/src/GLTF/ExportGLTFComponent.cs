@@ -54,7 +54,7 @@ namespace Shachihoko
         {
             pManager.AddGeometryParameter("Mesh", "Mesh", "", GH_ParamAccess.tree);
             pManager.AddGenericParameter("Material", "Material", "", GH_ParamAccess.tree);
-            pManager.AddTextParameter("FolderPath", "FolderPath", "", GH_ParamAccess.item, "D:\\デスクトップ");
+            pManager.AddTextParameter("FolderPath", "FolderPath", "", GH_ParamAccess.item, System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)); //デフォルトでデスクトップを指定.
             pManager.AddTextParameter("FileName", "FileName", "", GH_ParamAccess.item, "model");
             pManager.AddBooleanParameter("Switch", "Switch", "", GH_ParamAccess.item, false);
         }
