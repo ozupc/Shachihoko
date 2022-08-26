@@ -28,6 +28,11 @@ namespace Shachihoko
 {
     internal class MaterialParam
     {
+        public MaterialParam()
+        {
+
+        }
+
         public MaterialParam(int paramType)
         {
             ParamType = paramType;
