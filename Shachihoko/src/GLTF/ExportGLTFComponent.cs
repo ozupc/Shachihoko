@@ -98,10 +98,16 @@ namespace Shachihoko
 
             filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
 
-            //---<実行>---//
+            //---<実行>---//            
             for (int i = 0; i < ghMeshs_IGH_GeometricGoos.Paths.Count; i++)
             {
                 path = ghMeshs_IGH_GeometricGoos.Paths[i]; //pathを定義.
+
+                //--<Errorチェック>--//
+                if(materialBuilders_IGH_Goo.PathExists(path) == false)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "MeshとMaterialのツリー構造が一致しません.");
+                }
 
                 //---<IGH_GeometricGooをGHMeshに変換>---//
                 ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(ConvertIGH_GeometricGooToGHMesh);
@@ -109,13 +115,24 @@ namespace Shachihoko
                 //---<IGH_GooをMaterialBuilderに変換>---//
                 materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(ConvertIGH_GooToMaterialBuilder);
 
-                foreach (Rhino.Geometry.Mesh ghMesh in ghMeshs)
+                /*foreach (Rhino.Geometry.Mesh ghMesh in ghMeshs)
                 {
                     //---<GHMeshをList<List<VERTEX>>に変換>---//
                     vertexs = ConvertGHMeshVertex(ghMesh);
 
                     //---<MeshBuilderを作成>---//
-                    MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[i], num.ToString());
+                    /*MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[i], num.ToString());
+                    num += 1;
+                    meshBuilders.Add(meshBuilder);
+                }*/
+
+                for (int j = 0; j < ghMeshs.Count; j++)
+                {
+                    //---<GHMeshをList<List<VERTEX>>に変換>---//
+                    vertexs = ConvertGHMeshVertex(ghMeshs[j]);
+
+                    //---<MeshBuilderを作成>---//
+                    MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
                     num += 1;
                     meshBuilders.Add(meshBuilder);
                 }
