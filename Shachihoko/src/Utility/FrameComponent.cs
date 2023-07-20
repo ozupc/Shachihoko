@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class SameValueTreeComponent : GH_Component
+    public class FrameComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,9 +24,9 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public SameValueTreeComponent()
-          : base("SameValueTree", "SameValueTree",
-              "SameValueTree",
+        public FrameComponent()
+          : base("Frame", "Frame",
+              "Frame",
               "Shachihoko", ShachihokoMethod.Category["Utility"])
         {
         }
