@@ -41,8 +41,14 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Value", "Value", "Value", GH_ParamAccess.item);
-            pManager.AddGenericParameter("BasedTree", "BasedTree", "BasedTree", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("CrossSectionX", "CrossSectionX", "材の幅方向のサイズ（mm）", GH_ParamAccess.item, 50.0);
+            pManager.AddNumberParameter("CrossSectionY", "CrossSectionY", "材の高さ方向のサイズ（mm）", GH_ParamAccess.item, 25.0);
+            pManager.AddNumberParameter("SizeX", "SizeX", "モデルのX方向の外寸法（mm）", GH_ParamAccess.item, 1000.0);
+            pManager.AddNumberParameter("SizeY", "SizeY", "モデルのY方向の外寸法（mm）", GH_ParamAccess.item, 750.0);
+            pManager.AddNumberParameter("SizeZ", "SizeZ", "モデルのZ方向の外寸法（mm）", GH_ParamAccess.item, 500.0);
+            pManager.AddIntegerParameter("NumX", "NumX", "モデルのX方向に並ぶ材の数（本）", GH_ParamAccess.item, 3);
+            pManager.AddIntegerParameter("NumY", "NumY", "モデルのY方向に並ぶ材の数（本）", GH_ParamAccess.item, 2);
+            pManager.AddIntegerParameter("NumZ", "NumZ", "モデルのZ方向に並ぶ材の数（本）", GH_ParamAccess.item, 2);
         }
 
         /// <summary>
@@ -50,7 +56,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("ResultTree", "ResultTree", "ResultTree", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Frame", "Frame", "Frame", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -61,39 +67,81 @@ namespace Shachihoko
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             ///定義
-            IGH_Goo value = null;
-            GH_Structure<IGH_Goo> basedTree = new GH_Structure<IGH_Goo>();
+            double crossSectionX = 0.0;
+            double crossSectionY = 0.0;
+            double sizeX = 0.0;
+            double sizeY = 0.0;
+            double sizeZ = 0.0;
+            int numX = 0;
+            int numY = 0;
+            int numZ = 0;
+            Brep frame = null;
 
-            if (!DA.GetData(0, ref value)) return;
-            if (!DA.GetDataTree(1, out basedTree)) return;
+            if (!DA.GetData(0, ref crossSectionX)) return;
+            if (!DA.GetData(1, ref crossSectionY)) return;
+            if (!DA.GetData(2, ref sizeX)) return;
+            if (!DA.GetData(3, ref sizeY)) return;
+            if (!DA.GetData(4, ref sizeZ)) return;
+            if (!DA.GetData(5, ref numX)) return;
+            if (!DA.GetData(6, ref numY)) return;
+            if (!DA.GetData(7, ref numZ)) return;
 
-            DataTree<IGH_Goo> tree = new DataTree<IGH_Goo>(); //変換結果
-            GH_Path path = new GH_Path();
-            ///
-
-            ///treeの作成
-            for (int i = 0; i < basedTree.Paths.Count; i++)
+            //材を作成
+            List<Brep> beams = new List<Brep>();
+            double spanX = sizeX / (numX - 0);
+            double spanY = sizeY / (numY - 0);
+            double spanZ = sizeZ / (numZ - 0);
+            for (int i = 0; i < numX; i++)
             {
-                //pathを定義
-                path = basedTree.Paths[i];
-                //
-
-                //DataTree作成
-                for (int j = 0; j < basedTree.get_Branch(path).Count; j++)
+                for(int j = 0; j < numZ; j++)
                 {
-                    tree.Add(value, path);
+                    Line line = new Line(-sizeX / 2.0 + spanX * i, -sizeY / 2.0, -sizeZ / 2.0 + spanZ * j, -sizeX / 2.0 + spanX * i, sizeY / 2.0, -sizeZ / 2.0 + spanZ * j);
+                    Curve rail = line.ToNurbsCurve();
+                    Plane plane = new Plane(line.From, Vector3d.YAxis);
+                    Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
+                    Curve crossSection = rec.ToNurbsCurve();
+
+                    beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
                 }
-                //
+            }
+            for (int i = 0; i < numY; i++)
+            {
+                for (int j = 0; j < numX; j++)
+                {
+                    Line line = new Line(-sizeX / 2.0 + spanX * j, -sizeY / 2.0 + spanY * i, -sizeZ / 2.0, -sizeX / 2.0 + spanX * j, -sizeY / 2.0 + spanY * i, sizeZ / 2.0);
+                    Curve rail = line.ToNurbsCurve();
+                    Plane plane = new Plane(line.From, Vector3d.ZAxis);
+                    Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
+                    Curve crossSection = rec.ToNurbsCurve();
+
+                    beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
+                }
+            }
+            for (int i = 0; i < numZ; i++)
+            {
+                for (int j = 0; j < numY; j++)
+                {
+                    Line line = new Line(-sizeX / 2.0, -sizeY / 2.0 + spanY * j, -sizeZ / 2.0 + spanZ * i, sizeX / 2.0, -sizeY / 2.0 + spanY * j, -sizeZ / 2.0 + spanZ * i);
+                    Curve rail = line.ToNurbsCurve();
+                    Plane plane = new Plane(line.From, Vector3d.XAxis);
+                    Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
+                    Curve crossSection = rec.ToNurbsCurve();
+
+                    beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
+                }
             }
 
-            DA.SetDataTree(0, tree);
+            frame = Brep.CreateBooleanUnion(beams, 0.0)[0];
+
+            DA.SetData(0, frame);
+
         }
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.
         /// </summary>
-        protected override System.Drawing.Bitmap Icon
+        /*protected override System.Drawing.Bitmap Icon
         {
             get
             {
@@ -101,7 +149,7 @@ namespace Shachihoko
                 //return Resources.IconForThisComponent;
                 return Shachihoko.Properties.Resources.sameValue;
             }
-        }
+        }*/
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 
