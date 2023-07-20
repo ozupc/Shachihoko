@@ -110,7 +110,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("33b15775-a29a-4934-8466-9567befd372c"); }
+            get { return new Guid("B3F6A5CD-1C8C-467A-A370-DA7880599FA7"); }
         }
     }
 }

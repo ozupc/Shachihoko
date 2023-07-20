@@ -56,7 +56,8 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBrepParameter("Frame", "Frame", "Frame", GH_ParamAccess.item);
+            pManager.AddGeometryParameter("Frame", "Frame", "Frame", GH_ParamAccess.list);
+            pManager.AddGeometryParameter("Frame", "Frame", "Frame", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -86,11 +87,15 @@ namespace Shachihoko
             if (!DA.GetData(6, ref numY)) return;
             if (!DA.GetData(7, ref numZ)) return;
 
+            //仮
+            List<Line> lines = new List<Line>();
+            List<Curve> recs = new List<Curve>();
+
             //材を作成
             List<Brep> beams = new List<Brep>();
-            double spanX = sizeX / (numX - 0);
-            double spanY = sizeY / (numY - 0);
-            double spanZ = sizeZ / (numZ - 0);
+            double spanX = sizeX / (numX - 1);
+            double spanY = sizeY / (numY - 1);
+            double spanZ = sizeZ / (numZ - 1);
             for (int i = 0; i < numX; i++)
             {
                 for(int j = 0; j < numZ; j++)
@@ -101,7 +106,10 @@ namespace Shachihoko
                     Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
                     Curve crossSection = rec.ToNurbsCurve();
 
-                    beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
+                    lines.Add(line);
+                    recs.Add(crossSection);
+
+                    //beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
                 }
             }
             for (int i = 0; i < numY; i++)
@@ -114,7 +122,10 @@ namespace Shachihoko
                     Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
                     Curve crossSection = rec.ToNurbsCurve();
 
-                    beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
+                    lines.Add(line);
+                    recs.Add(crossSection);
+
+                    //beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
                 }
             }
             for (int i = 0; i < numZ; i++)
@@ -127,13 +138,17 @@ namespace Shachihoko
                     Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
                     Curve crossSection = rec.ToNurbsCurve();
 
-                    beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
+                    lines.Add(line);
+                    recs.Add(crossSection);
+
+                    //beams.Add(Brep.CreateFromSweep(rail, crossSection, true, 0.0)[0]);
                 }
             }
 
-            frame = Brep.CreateBooleanUnion(beams, 0.0)[0];
+            //frame = Brep.CreateBooleanUnion(beams, 0.0)[0];
 
-            DA.SetData(0, frame);
+            DA.SetDataList(0, lines);
+            DA.SetDataList(1, recs);
 
         }
 
