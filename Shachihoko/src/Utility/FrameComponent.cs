@@ -102,7 +102,10 @@ namespace Shachihoko
                 {
                     Line line = new Line(-sizeX / 2.0 + spanX * i, -sizeY / 2.0, -sizeZ / 2.0 + spanZ * j, -sizeX / 2.0 + spanX * i, sizeY / 2.0, -sizeZ / 2.0 + spanZ * j);
                     Curve rail = line.ToNurbsCurve();
-                    Plane plane = new Plane(line.From, Vector3d.YAxis);
+                    Point3d origin = new Point3d(line.From);
+                    Transform move = new Transform(Transform.Translation(-crossSectionX / 2.0, 0.0, -crossSectionY / 2.0));
+                    origin.Transform(move);
+                    Plane plane = new Plane(origin, Vector3d.YAxis);
                     Rectangle3d rec = new Rectangle3d(plane, crossSectionX, crossSectionY);
                     Curve crossSection = rec.ToNurbsCurve();
 
