@@ -13,7 +13,7 @@ using Rhino.DocObjects;
 // folder in Grasshopper.
 // You can use the _GrasshopperDeveloperSettings Rhino command for that.
 
-namespace Shachihoko
+namespace Shachihoko.src.Surface
 {
     public class VertexBoxComponent : GH_Component
     {
@@ -27,7 +27,7 @@ namespace Shachihoko
         public VertexBoxComponent()
           : base("Vertex Box", "Vertex Box",
               "Vertex Box",
-              "Shachihoko", ShachihokoMethod.Category["Utility"])
+              "Shachihoko", ShachihokoMethod.Category["Surface"])
         {
         }
 
@@ -39,7 +39,7 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
@@ -50,7 +50,7 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
         }

@@ -10,12 +10,6 @@
   </PropertyGroup>
 	
   <ItemGroup>
-    <Compile Remove="src\新しいフォルダー\**" />
-    <EmbeddedResource Remove="src\新しいフォルダー\**" />
-    <None Remove="src\新しいフォルダー\**" />
-  </ItemGroup>
-	
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   
