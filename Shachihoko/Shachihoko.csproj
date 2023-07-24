@@ -36,7 +36,6 @@
   
   <ItemGroup>
     <Folder Include="bulid\" />
-    <Folder Include="Resources\Surface\" />
   </ItemGroup>
   
   <ItemGroup>

@@ -73,6 +73,16 @@ namespace Shachihoko.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap CylinderANDPipe {
+            get {
+                object obj = ResourceManager.GetObject("CylinderANDPipe", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap rhinoMaterial {
             get {
                 object obj = ResourceManager.GetObject("rhinoMaterial", resourceCulture);
@@ -83,9 +93,9 @@ namespace Shachihoko.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap sameValue {
+        internal static System.Drawing.Bitmap sameValueTree {
             get {
-                object obj = ResourceManager.GetObject("sameValue", resourceCulture);
+                object obj = ResourceManager.GetObject("sameValueTree", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
