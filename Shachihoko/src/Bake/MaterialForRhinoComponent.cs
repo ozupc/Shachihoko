@@ -33,6 +33,11 @@ namespace Shachihoko
         {
         }
 
+        public override GH_Exposure Exposure
+        {
+            get { return GH_Exposure.secondary; }
+        }
+
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>

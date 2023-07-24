@@ -18,6 +18,9 @@ namespace Shachihoko
             },
             {
                 "Utility", "10_Utility"
+            },
+            {
+                "Surface", "11_Surface"
             }
         };
     }
