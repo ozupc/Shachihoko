@@ -87,15 +87,15 @@ namespace Shachihoko.src.Surface
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.
         /// </summary>
-        /*protected override System.Drawing.Bitmap Icon
+        protected override System.Drawing.Bitmap Icon
         {
             get
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.sameValue;
+                return Shachihoko.Properties.Resources.VertexBox;
             }
-        }*/
+        }
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 
