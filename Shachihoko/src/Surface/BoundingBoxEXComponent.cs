@@ -15,7 +15,7 @@ using System.Linq;
 /// https://digiarchi.jp/grasshopper/create-component-menu/
 /// </summary>
 
-namespace Shachihoko.src.Surface
+namespace Shachihoko
 {
     public enum Style { PerObject, UnionBox };
 
@@ -33,14 +33,14 @@ namespace Shachihoko.src.Surface
         public BoundingBoxEXComponent()
           : base("Bounding Box Ex", "BBox Ex",
               "Solve oriented geometry bounding boxes and display the size.",
-              "Surface", "Primitive")
+              "Shachihoko", ShachihokoMethod.Category["Surface"])
         {
             UpdateMenu();
         }
 
         public override GH_Exposure Exposure
         {
-            get { return GH_Exposure.secondary; }
+            get { return GH_Exposure.primary; }
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -178,7 +178,7 @@ namespace Shachihoko.src.Surface
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.CylinderANDPipe;
+                return Shachihoko.Properties.Resources.BoundingBoxEX;
             }
         }
 

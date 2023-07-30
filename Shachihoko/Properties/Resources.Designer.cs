@@ -73,9 +73,49 @@ namespace Shachihoko.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap BoundingBoxEX {
+            get {
+                object obj = ResourceManager.GetObject("BoundingBoxEX", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap CylinderANDPipe {
             get {
                 object obj = ResourceManager.GetObject("CylinderANDPipe", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap ExtrudeSurface {
+            get {
+                object obj = ResourceManager.GetObject("ExtrudeSurface", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap LineCDL {
+            get {
+                object obj = ResourceManager.GetObject("LineCDL", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap RectangleFromLine {
+            get {
+                object obj = ResourceManager.GetObject("RectangleFromLine", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -96,6 +136,16 @@ namespace Shachihoko.Properties {
         internal static System.Drawing.Bitmap sameValueTree {
             get {
                 object obj = ResourceManager.GetObject("sameValueTree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap SinCosTan {
+            get {
+                object obj = ResourceManager.GetObject("SinCosTan", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

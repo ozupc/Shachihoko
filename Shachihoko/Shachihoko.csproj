@@ -36,6 +36,8 @@
   
   <ItemGroup>
     <Folder Include="bulid\" />
+    <Folder Include="Resources\Curve\" />
+    <Folder Include="Resources\Math\" />
   </ItemGroup>
   
   <ItemGroup>

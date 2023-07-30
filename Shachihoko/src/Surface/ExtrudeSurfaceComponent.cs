@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Rhino.DocObjects;
+using Rhino;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -15,7 +16,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class VertexBoxComponent : GH_Component
+    public class ExtrudeSurfaceComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,9 +25,9 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public VertexBoxComponent()
-          : base("Vertex Box", "Vertex Box",
-              "Vertex Box",
+        public ExtrudeSurfaceComponent()
+          : base("Extrude Surface", "ExSurf",
+              "Extrude surface.",
               "Shachihoko", ShachihokoMethod.Category["Surface"])
         {
         }
@@ -39,20 +40,20 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Y", "Y", "Size of box in {Y} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Z", "Z", "Size of box in {Z} direction.", GH_ParamAccess.item, 1.0);
+            pManager.AddBrepParameter("Surface", "S", "Surface to offset.", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Distance", "D", "Distance to offset.", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("BothSides", "B", "Offset to both sides.", GH_ParamAccess.item, false);
+            pManager.AddBooleanParameter("Caps", "C", "Make caps.", GH_ParamAccess.item, true);
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
+            pManager.AddBrepParameter("Brep", "B", "Resulting offset solid.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -62,24 +63,31 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            ///定義
-            Plane plane = new Plane();
-            double sizeX = 0.0;
-            double sizeY = 0.0;
-            double sizeZ = 0.0;
+            Brep baseBrep = new Brep();
+            double dist = 0;
+            bool both = false;
+            bool cap = true;
+            Brep brep = new Brep();
 
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref sizeX)) return;
-            if (!DA.GetData(2, ref sizeY)) return;
-            if (!DA.GetData(3, ref sizeZ)) return;
+            if (!DA.GetData(0, ref baseBrep)) return;
+            if (!DA.GetData(1, ref dist)) return;
+            if (!DA.GetData(2, ref both)) return;
+            if (!DA.GetData(3, ref cap)) return;
 
-            Interval intervalX = new Interval(0, sizeX);
-            Interval intervalY = new Interval(0, sizeY);
-            Interval intervalZ = new Interval(0, sizeZ);
+            double tol = RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
 
-            Box box = new Box(plane, intervalX, intervalY, intervalZ);
+            if (both)
+            {
+                double extrude = Math.Abs(dist) / 2;
+                brep = Brep.CreateFromOffsetFace(baseBrep.Faces[0], extrude, tol, both, cap);
+            }
+            else
+            {
+                double extrude = dist;
+                brep = Brep.CreateFromOffsetFace(baseBrep.Faces[0], extrude, tol, both, cap);
+            }
 
-            DA.SetData(0, box);
+            DA.SetData(0, brep);
 
         }
 
@@ -93,7 +101,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.VertexBox;
+                return Shachihoko.Properties.Resources.ExtrudeSurface;
             }
         }
 
@@ -104,7 +112,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("2eec2a22-821c-4ebf-9399-4ab512124b70"); }
+            get { return new Guid("A0A47133-D3D2-4ED2-B3BC-21A739699476"); }
         }
     }
 }

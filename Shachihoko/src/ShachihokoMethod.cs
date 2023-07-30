@@ -20,7 +20,13 @@ namespace Shachihoko
                 "Utility", "10_Utility"
             },
             {
-                "Surface", "11_Surface"
+                "Surface", "13_Surface"
+            },
+            {
+                "Curve", "12_Curve"
+            },
+            {
+                "Math", "11_Math"
             }
         };
     }
