@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class SinCosTanComponent : GH_Component
+    public class SinCosTanWaveComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,8 +24,8 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public SinCosTanComponent()
-          : base("SinCosTanWave", "SCTW",
+        public SinCosTanWaveComponent()
+          : base("Sin Cos Tan Wave", "SCTW",
               "Compute the Sine/Cosine/Tangent from parameter.",
               "Shachihoko", ShachihokoMethod.Category["Math"])
         {

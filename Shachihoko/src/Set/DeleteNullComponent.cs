@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class SameValueTreeComponent : GH_Component
+    public class DeleteNullComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,10 +24,10 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public SameValueTreeComponent()
-          : base("Same Value Tree", "Same Value Tree",
-              "Same Value Tree.",
-              "Shachihoko", ShachihokoMethod.Category["Utility"])
+        public DeleteNullComponent()
+          : base("Null Delete", "NullDel",
+              "Delete null items.",
+              "Shachihoko", ShachihokoMethod.Category["Set"])
         {
         }
 
@@ -41,8 +41,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Value", "Value", "Value", GH_ParamAccess.item);
-            pManager.AddGenericParameter("BasedTree", "BasedTree", "BasedTree", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Item", "I", "Item to test.", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -50,7 +49,9 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("ResultTree", "ResultTree", "ResultTree", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Fixed Item", "I", "Fixed Item.", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Null Flag", "Flag", "True if item is null", GH_ParamAccess.list);
+
         }
 
         /// <summary>
@@ -60,33 +61,26 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            ///定義
-            IGH_Goo value = null;
-            GH_Structure<IGH_Goo> basedTree = new GH_Structure<IGH_Goo>();
+            List<object> objs = new List<object>();
+            List<object> newobjs = new List<object>();
+            List<bool> b = new List<bool>();
+            if (!DA.GetDataList(0, objs)) return;
 
-            if (!DA.GetData(0, ref value)) return;
-            if (!DA.GetDataTree(1, out basedTree)) return;
-
-            DataTree<IGH_Goo> tree = new DataTree<IGH_Goo>(); //変換結果
-            GH_Path path = new GH_Path();
-            ///
-
-            ///treeの作成
-            for (int i = 0; i < basedTree.Paths.Count; i++)
+            foreach (object obj in objs)
             {
-                //pathを定義
-                path = basedTree.Paths[i];
-                //
-
-                //DataTree作成
-                for (int j = 0; j < basedTree.get_Branch(path).Count; j++)
+                if (obj != null)
                 {
-                    tree.Add(value, path);
+                    newobjs.Add(obj);
+                    b.Add(false);
                 }
-                //
+                else if (obj == null)
+                {
+                    b.Add(true);
+                }
             }
 
-            DA.SetDataTree(0, tree);
+            DA.SetDataList(0, newobjs);
+            DA.SetDataList(1, b);
         }
 
         /// <summary>
@@ -99,7 +93,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.sameValueTree;
+                return Shachihoko.Properties.Resources.DeleteNull;
             }
         }
 
@@ -110,7 +104,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("B3F6A5CD-1C8C-467A-A370-DA7880599FA7"); }
+            get { return new Guid("62A084D4-169F-4F8E-A560-739E6BEFB2A6"); }
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Shachihoko
         protected Style style = Style.PerObject;
 
         public BoundingBoxEXComponent()
-          : base("Bounding Box Ex", "BBox Ex",
+          : base("Bounding Box EX", "BBox EX",
               "Solve oriented geometry bounding boxes and display the size.",
               "Shachihoko", ShachihokoMethod.Category["Surface"])
         {

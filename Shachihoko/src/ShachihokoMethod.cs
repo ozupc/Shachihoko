@@ -17,7 +17,7 @@ namespace Shachihoko
                 "GLTF", "01_GLTF"
             },
             {
-                "Utility", "10_Utility"
+                "Set", "10_Set"
             },
             {
                 "Surface", "13_Surface"
