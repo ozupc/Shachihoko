@@ -13,7 +13,7 @@ using Rhino.DocObjects;
 // folder in Grasshopper.
 // You can use the _GrasshopperDeveloperSettings Rhino command for that.
 
-namespace Shachihoko.src.Surface
+namespace Shachihoko
 {
     public class CylinderANDPipeComponent : GH_Component
     {

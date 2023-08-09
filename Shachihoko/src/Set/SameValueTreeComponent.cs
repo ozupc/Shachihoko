@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class VertexBoxComponent : GH_Component
+    public class SameValueTreeComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,10 +24,10 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public VertexBoxComponent()
-          : base("Vertex Box", "Vertex Box",
-              "Vertex Box",
-              "Shachihoko", ShachihokoMethod.Category["Surface"])
+        public SameValueTreeComponent()
+          : base("Same Value Tree", "Same Value Tree",
+              "Same Value Tree.",
+              "Shachihoko", ShachihokoMethod.Category["Set"])
         {
         }
 
@@ -39,20 +39,18 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Y", "Y", "Size of box in {Y} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Z", "Z", "Size of box in {Z} direction.", GH_ParamAccess.item, 1.0);
+            pManager.AddGenericParameter("Value", "Value", "Value", GH_ParamAccess.item);
+            pManager.AddGenericParameter("BasedTree", "BasedTree", "BasedTree", GH_ParamAccess.tree);
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("ResultTree", "ResultTree", "ResultTree", GH_ParamAccess.tree);
         }
 
         /// <summary>
@@ -63,24 +61,32 @@ namespace Shachihoko
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             ///定義
-            Plane plane = new Plane();
-            double sizeX = 0.0;
-            double sizeY = 0.0;
-            double sizeZ = 0.0;
+            IGH_Goo value = null;
+            GH_Structure<IGH_Goo> basedTree = new GH_Structure<IGH_Goo>();
 
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref sizeX)) return;
-            if (!DA.GetData(2, ref sizeY)) return;
-            if (!DA.GetData(3, ref sizeZ)) return;
+            if (!DA.GetData(0, ref value)) return;
+            if (!DA.GetDataTree(1, out basedTree)) return;
 
-            Interval intervalX = new Interval(0, sizeX);
-            Interval intervalY = new Interval(0, sizeY);
-            Interval intervalZ = new Interval(0, sizeZ);
+            DataTree<IGH_Goo> tree = new DataTree<IGH_Goo>(); //変換結果
+            GH_Path path = new GH_Path();
+            ///
 
-            Box box = new Box(plane, intervalX, intervalY, intervalZ);
+            ///treeの作成
+            for (int i = 0; i < basedTree.Paths.Count; i++)
+            {
+                //pathを定義
+                path = basedTree.Paths[i];
+                //
 
-            DA.SetData(0, box);
+                //DataTree作成
+                for (int j = 0; j < basedTree.get_Branch(path).Count; j++)
+                {
+                    tree.Add(value, path);
+                }
+                //
+            }
 
+            DA.SetDataTree(0, tree);
         }
 
         /// <summary>
@@ -93,7 +99,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.VertexBox;
+                return Shachihoko.Properties.Resources.SameValueTree;
             }
         }
 
@@ -104,7 +110,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("2eec2a22-821c-4ebf-9399-4ab512124b70"); }
+            get { return new Guid("B3F6A5CD-1C8C-467A-A370-DA7880599FA7"); }
         }
     }
 }

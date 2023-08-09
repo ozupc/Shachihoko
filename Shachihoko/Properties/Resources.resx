@@ -119,16 +119,67 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="bake" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\bake\bake.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\Bake\bake.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BoundingBoxEX" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Surface\BoundingBoxEX.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CircleLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\CircleLayout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CylinderANDPipe" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Surface\CylinderANDPipe.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="rhinoMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\bake\rhinomaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="DeleteNull" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Set\DeleteNull.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sameValueTree" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Utility\sameValueTree.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ExtrudeSurface" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Surface\ExtrudeSurface.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Heart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\Heart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IntegerRandom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Set\IntegerRandom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LineCDL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\LineCDL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MaxMin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Math\MaxMin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PartitionList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Set\PartitionList.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Plate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Surface\Plate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PointInCurve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\PointInCurve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PopulateGeometryEX" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Vector\PopulateGeometryEX.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RectangleFromLine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\RectangleFromLine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="rhinoMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Bake\rhinoMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SameValueTree" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Set\sameValueTree.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SinCosTan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Math\SinCosTan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Statistics" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Math\Statistics.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TextCurve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\TextCurve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TransformVectorFromPlane" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Vector\TransformVectorFromPlane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="VertexBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Surface\VertexBox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

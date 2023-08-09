@@ -121,16 +121,14 @@ namespace Shachihoko
 
         private GeometryBase ConvertToGeometry(IGH_GeometricGoo igh_GeometricGoo) //Convertの方法を定義（ConvertAllで使用）
         {
-            GeometryBase geometry = null;
-            igh_GeometricGoo.CastTo<GeometryBase>(out geometry);
+            igh_GeometricGoo.CastTo<GeometryBase>(out GeometryBase geometry);
 
             return geometry;
         }
 
         private Material ConvertToMaterial(IGH_Goo igH_Goo) //Convertの方法を定義（ConvertAllで使用）
         {
-            Material material = null;
-            igH_Goo.CastTo<Material>(out material);
+            igH_Goo.CastTo<Material>(out Material material);
 
             return material;
         }

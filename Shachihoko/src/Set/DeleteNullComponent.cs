@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class VertexBoxComponent : GH_Component
+    public class DeleteNullComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,10 +24,10 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public VertexBoxComponent()
-          : base("Vertex Box", "Vertex Box",
-              "Vertex Box",
-              "Shachihoko", ShachihokoMethod.Category["Surface"])
+        public DeleteNullComponent()
+          : base("Null Delete", "NullDel",
+              "Delete null items.",
+              "Shachihoko", ShachihokoMethod.Category["Set"])
         {
         }
 
@@ -39,20 +39,19 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Y", "Y", "Size of box in {Y} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Z", "Z", "Size of box in {Z} direction.", GH_ParamAccess.item, 1.0);
+            pManager.AddGenericParameter("Item", "I", "Item to test.", GH_ParamAccess.list);
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Fixed Item", "I", "Fixed Item.", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Null Flag", "Flag", "True if item is null", GH_ParamAccess.list);
+
         }
 
         /// <summary>
@@ -62,25 +61,26 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            ///定義
-            Plane plane = new Plane();
-            double sizeX = 0.0;
-            double sizeY = 0.0;
-            double sizeZ = 0.0;
+            List<object> objs = new List<object>();
+            List<object> newobjs = new List<object>();
+            List<bool> b = new List<bool>();
+            if (!DA.GetDataList(0, objs)) return;
 
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref sizeX)) return;
-            if (!DA.GetData(2, ref sizeY)) return;
-            if (!DA.GetData(3, ref sizeZ)) return;
+            foreach (object obj in objs)
+            {
+                if (obj != null)
+                {
+                    newobjs.Add(obj);
+                    b.Add(false);
+                }
+                else if (obj == null)
+                {
+                    b.Add(true);
+                }
+            }
 
-            Interval intervalX = new Interval(0, sizeX);
-            Interval intervalY = new Interval(0, sizeY);
-            Interval intervalZ = new Interval(0, sizeZ);
-
-            Box box = new Box(plane, intervalX, intervalY, intervalZ);
-
-            DA.SetData(0, box);
-
+            DA.SetDataList(0, newobjs);
+            DA.SetDataList(1, b);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.VertexBox;
+                return Shachihoko.Properties.Resources.DeleteNull;
             }
         }
 
@@ -104,7 +104,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("2eec2a22-821c-4ebf-9399-4ab512124b70"); }
+            get { return new Guid("62A084D4-169F-4F8E-A560-739E6BEFB2A6"); }
         }
     }
 }

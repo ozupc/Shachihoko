@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class VertexBoxComponent : GH_Component
+    public class LineCDLComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,10 +24,10 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public VertexBoxComponent()
-          : base("Vertex Box", "Vertex Box",
-              "Vertex Box",
-              "Shachihoko", ShachihokoMethod.Category["Surface"])
+        public LineCDLComponent()
+          : base("Line CDL", "Line CDL",
+              "Create a line segment defined by center point, tangent and length.",
+              "Shachihoko", ShachihokoMethod.Category["Curve"])
         {
         }
 
@@ -39,20 +39,21 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Y", "Y", "Size of box in {Y} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Z", "Z", "Size of box in {Z} direction.", GH_ParamAccess.item, 1.0);
+            pManager.AddPointParameter("Center", "C", "Line center point.", GH_ParamAccess.item, Plane.WorldXY.Origin);
+            pManager.AddVectorParameter("Direction", "D", "Line tangent. (direction)", GH_ParamAccess.item, Plane.WorldXY.XAxis);
+            pManager.AddNumberParameter("Length", "L", "Line length.", GH_ParamAccess.item, 1.0);
+
+            pManager.HideParameter(0);
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
+            pManager.AddLineParameter("Line", "L", "Line segment.", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -62,25 +63,25 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            ///定義
-            Plane plane = new Plane();
-            double sizeX = 0.0;
-            double sizeY = 0.0;
-            double sizeZ = 0.0;
+            Point3d centerPt = new Point3d();
+            Vector3d direction = new Vector3d();
+            double length = 0.0;
 
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref sizeX)) return;
-            if (!DA.GetData(2, ref sizeY)) return;
-            if (!DA.GetData(3, ref sizeZ)) return;
+            if (!DA.GetData(0, ref centerPt)) return;
+            if (!DA.GetData(1, ref direction)) return;
+            if (!DA.GetData(2, ref length)) return;
 
-            Interval intervalX = new Interval(0, sizeX);
-            Interval intervalY = new Interval(0, sizeY);
-            Interval intervalZ = new Interval(0, sizeZ);
+            //描写
+            Point3d startPt = new Point3d(centerPt);
+            Point3d endPt = new Point3d(centerPt);
+            direction.Unitize();
+            direction = direction * length / 2;
+            startPt.Transform(Transform.Translation(-direction));
+            endPt.Transform(Transform.Translation(direction));
 
-            Box box = new Box(plane, intervalX, intervalY, intervalZ);
+            Line line = new Line(startPt, endPt);
 
-            DA.SetData(0, box);
-
+            DA.SetData(0, line);
         }
 
         /// <summary>
@@ -93,7 +94,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.VertexBox;
+                return Shachihoko.Properties.Resources.LineCDL;
             }
         }
 
@@ -104,7 +105,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("2eec2a22-821c-4ebf-9399-4ab512124b70"); }
+            get { return new Guid("5534ABB0-C115-49AF-8468-106DD28D7E53"); }
         }
     }
 }

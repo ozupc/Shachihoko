@@ -15,7 +15,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class VertexBoxComponent : GH_Component
+    public class IntegerRandomComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,10 +24,10 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public VertexBoxComponent()
-          : base("Vertex Box", "Vertex Box",
-              "Vertex Box",
-              "Shachihoko", ShachihokoMethod.Category["Surface"])
+        public IntegerRandomComponent()
+          : base("IntegerRandom", "IntRamdom",
+              "Generate a list of random numbers using Fisher-Yate Algolithm.",
+              "Shachihoko", ShachihokoMethod.Category["Set"])
         {
         }
 
@@ -39,20 +39,19 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Y", "Y", "Size of box in {Y} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Z", "Z", "Size of box in {Z} direction.", GH_ParamAccess.item, 1.0);
+            pManager.AddIntervalParameter("Range", "R", "Domain of random numeric range.", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Number", "N", "Number of random values.", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Seed", "S", "Seed of random engine.", GH_ParamAccess.item, 0);
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Random", "R", "Random numbers.", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -62,25 +61,41 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            ///定義
-            Plane plane = new Plane();
-            double sizeX = 0.0;
-            double sizeY = 0.0;
-            double sizeZ = 0.0;
+            Interval domain = new Interval();
+            int num = 0;
+            int seed = 0;
 
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref sizeX)) return;
-            if (!DA.GetData(2, ref sizeY)) return;
-            if (!DA.GetData(3, ref sizeZ)) return;
+            if (!DA.GetData(0, ref domain)) return;
+            if (!DA.GetData(1, ref num)) return;
+            if (!DA.GetData(2, ref seed)) return;
 
-            Interval intervalX = new Interval(0, sizeX);
-            Interval intervalY = new Interval(0, sizeY);
-            Interval intervalZ = new Interval(0, sizeZ);
+            if (domain.Length < num)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Number must be smaller than Size of Range.");
+            }
 
-            Box box = new Box(plane, intervalX, intervalY, intervalZ);
+            List<int> nums = new List<int>();
+            List<int> result = new List<int>();
+            Random rand = new Random(seed);
+            for (int i = (int)domain.Min; i < (int)domain.Max; i++)
+            {
+                nums.Add(i);
+            }
 
-            DA.SetData(0, box);
+            for (int Pos = 0; Pos < num; Pos++)
+            {
+                int nextPos = rand.Next(Pos, nums.Count);
+                int temp = nums[Pos];
+                nums[Pos] = nums[nextPos];
+                nums[nextPos] = temp;
+            }
 
+            for (int i = 0; i < num; i++)
+            {
+                result.Add(nums[i]);
+            }
+
+            DA.SetDataList(0, result);
         }
 
         /// <summary>
@@ -93,7 +108,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.VertexBox;
+                return Shachihoko.Properties.Resources.IntegerRandom;
             }
         }
 
@@ -104,7 +119,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("2eec2a22-821c-4ebf-9399-4ab512124b70"); }
+            get { return new Guid("077A76D2-AE09-45F9-8016-D64A0C8E714A"); }
         }
     }
 }

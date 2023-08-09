@@ -17,10 +17,19 @@ namespace Shachihoko
                 "GLTF", "01_GLTF"
             },
             {
-                "Utility", "10_Utility"
+                "Set", "10_Set"
             },
             {
-                "Surface", "11_Surface"
+                "Surface", "14_Surface"
+            },
+            {
+                "Curve", "13_Curve"
+            },
+            {
+                "Math", "11_Math"
+            },
+            {
+                "Vector", "12_Vector"
             }
         };
     }

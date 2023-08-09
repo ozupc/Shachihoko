@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Rhino.DocObjects;
+using System.Linq;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -15,7 +16,7 @@ using Rhino.DocObjects;
 
 namespace Shachihoko
 {
-    public class VertexBoxComponent : GH_Component
+    public class MaxMinComponent : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -24,10 +25,10 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public VertexBoxComponent()
-          : base("Vertex Box", "Vertex Box",
-              "Vertex Box",
-              "Shachihoko", ShachihokoMethod.Category["Surface"])
+        public MaxMinComponent()
+          : base("MaxMin", "MM",
+              "Return the greater/lesser of list.",
+              "Shachihoko", ShachihokoMethod.Category["Math"])
         {
         }
 
@@ -39,20 +40,19 @@ namespace Shachihoko
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
-        protected override void RegisterInputParams(GH_InputParamManager pManager)
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddPlaneParameter("Base", "Base", "Base Plane.", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("X", "X", "Size of box in {X} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Y", "Y", "Size of box in {Y} direction.", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Z", "Z", "Size of box in {Z} direction.", GH_ParamAccess.item, 1.0);
+            pManager.AddNumberParameter("Number", "N", "Give me Numbers!", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Max/Min", "MM", "True:Max, False:Min", GH_ParamAccess.item, true);
         }
 
         /// <summary>
         /// Registers all the output parameters for this component.
         /// </summary>
-        protected override void RegisterOutputParams(GH_OutputParamManager pManager)
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddBoxParameter("Box", "Box", "Resulting Box.", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Result", "R", "Max/Min number.", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Index", "Id", "Max/Min Index.", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -62,25 +62,41 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            ///定義
-            Plane plane = new Plane();
-            double sizeX = 0.0;
-            double sizeY = 0.0;
-            double sizeZ = 0.0;
+            List<double> numbers = new List<double>();
+            bool tf = true;
+            double num;
+            List<int> index = new List<int>();
 
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref sizeX)) return;
-            if (!DA.GetData(2, ref sizeY)) return;
-            if (!DA.GetData(3, ref sizeZ)) return;
+            if (!DA.GetDataList<double>(0, numbers)) return;
+            if (!DA.GetData(1, ref tf)) return;
 
-            Interval intervalX = new Interval(0, sizeX);
-            Interval intervalY = new Interval(0, sizeY);
-            Interval intervalZ = new Interval(0, sizeZ);
+            int length = numbers.Count();
 
-            Box box = new Box(plane, intervalX, intervalY, intervalZ);
+            if (tf)
+            {
+                num = numbers.Max();
+                for (int i = 0; i < length; i++)
+                {
+                    if (num == numbers[i])
+                    {
+                        index.Add(i);
+                    }
+                }
+            }
+            else
+            {
+                num = numbers.Min();
+                for (int i = 0; i < length; i++)
+                {
+                    if (num == numbers[i])
+                    {
+                        index.Add(i);
+                    }
+                }
+            }
 
-            DA.SetData(0, box);
-
+            DA.SetData(0, num);
+            DA.SetDataList(1, index);
         }
 
         /// <summary>
@@ -93,7 +109,7 @@ namespace Shachihoko
             {
                 // You can add image files to your project resources and access them like this:
                 //return Resources.IconForThisComponent;
-                return Shachihoko.Properties.Resources.VertexBox;
+                return Shachihoko.Properties.Resources.MaxMin;
             }
         }
 
@@ -104,7 +120,7 @@ namespace Shachihoko
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("2eec2a22-821c-4ebf-9399-4ab512124b70"); }
+            get { return new Guid("B2CBB7E2-E8BC-493C-94DA-59866D5C78E1"); }
         }
     }
 }
