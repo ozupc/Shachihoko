@@ -183,6 +183,26 @@ namespace Shachihoko.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap PointInCurve {
+            get {
+                object obj = ResourceManager.GetObject("PointInCurve", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap PopulateGeometryEX {
+            get {
+                object obj = ResourceManager.GetObject("PopulateGeometryEX", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap RectangleFromLine {
             get {
                 object obj = ResourceManager.GetObject("RectangleFromLine", resourceCulture);
@@ -216,6 +236,36 @@ namespace Shachihoko.Properties {
         internal static System.Drawing.Bitmap SinCosTan {
             get {
                 object obj = ResourceManager.GetObject("SinCosTan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap Statistics {
+            get {
+                object obj = ResourceManager.GetObject("Statistics", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap TextCurve {
+            get {
+                object obj = ResourceManager.GetObject("TextCurve", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap TransformVectorFromPlane {
+            get {
+                object obj = ResourceManager.GetObject("TransformVectorFromPlane", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

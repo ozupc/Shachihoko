@@ -20,13 +20,16 @@ namespace Shachihoko
                 "Set", "10_Set"
             },
             {
-                "Surface", "13_Surface"
+                "Surface", "14_Surface"
             },
             {
-                "Curve", "12_Curve"
+                "Curve", "13_Curve"
             },
             {
                 "Math", "11_Math"
+            },
+            {
+                "Vector", "12_Vector"
             }
         };
     }

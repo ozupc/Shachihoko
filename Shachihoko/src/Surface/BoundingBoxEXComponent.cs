@@ -1,8 +1,8 @@
 ﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
-using Grasshopper.Kernel.Types;
 using System.Linq;
 
 // In order to load the result of this wizard, you will also need to
@@ -151,20 +151,20 @@ namespace Shachihoko
 
         protected override void AppendAdditionalComponentMenuItems(System.Windows.Forms.ToolStripDropDown menu)
         {
-            System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_0 = GH_DocumentObject.Menu_AppendItem(menu, "Per Object", new System.EventHandler(this.menu_PerObject), true, style == Style.PerObject);
+            System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_0 = GH_DocumentObject.Menu_AppendItem(menu, "Per Object", new System.EventHandler(this.Menu_PerObject), true, style == Style.PerObject);
             toolStripMenuItem_0.ToolTipText = "";
-            System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_1 = GH_DocumentObject.Menu_AppendItem(menu, "Union Box", new System.EventHandler(this.menu_UnionBox), true, style == Style.UnionBox);
+            System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_1 = GH_DocumentObject.Menu_AppendItem(menu, "Union Box", new System.EventHandler(this.Menu_UnionBox), true, style == Style.UnionBox);
             toolStripMenuItem_1.ToolTipText = "";
         }
 
-        private void menu_PerObject(object sender, System.EventArgs e)
+        private void Menu_PerObject(object sender, System.EventArgs e)
         {
             base.RecordUndoEvent("Style");
             this.style = Style.PerObject;
             this.UpdateMenu();
             this.ExpireSolution(true);
         }
-        private void menu_UnionBox(object sender, System.EventArgs e)
+        private void Menu_UnionBox(object sender, System.EventArgs e)
         {
             base.RecordUndoEvent("Style");
             this.style = Style.UnionBox;

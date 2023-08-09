@@ -145,9 +145,7 @@ namespace Shachihoko
                     Line line = new Line(o, center_point);
 
                     //Intersect point circle and line. 
-                    double t1, t2;
-                    Point3d crossPt_0, crossPt_1;
-                    var Event = Rhino.Geometry.Intersect.Intersection.LineCircle(line, circles[i][j], out t1, out crossPt_0, out t2, out crossPt_1);
+                    var Event = Rhino.Geometry.Intersect.Intersection.LineCircle(line, circles[i][j], out double t1, out Point3d crossPt_0, out double t2, out Point3d crossPt_1);
                     if (crossPt_0.DistanceTo(o) < crossPt_1.DistanceTo(o))
                     {
                         new_intersections.Add(crossPt_0);

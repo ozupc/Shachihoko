@@ -154,6 +154,12 @@
   <data name="Plate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Surface\Plate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="PointInCurve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\PointInCurve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PopulateGeometryEX" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Vector\PopulateGeometryEX.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="RectangleFromLine" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Curve\RectangleFromLine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -165,6 +171,15 @@
   </data>
   <data name="SinCosTan" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Math\SinCosTan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Statistics" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Math\Statistics.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TextCurve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Curve\TextCurve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TransformVectorFromPlane" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Vector\TransformVectorFromPlane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="VertexBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Surface\VertexBox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
