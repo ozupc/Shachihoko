@@ -26,7 +26,7 @@ using SharpGLTF.Schema2;
 
 namespace Shachihoko
 {
-    public class ExportGLTFComponent : GH_Component
+    public class ExportGLTFComponent : GH_Component, IGH_VariableParameterComponent
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -47,16 +47,38 @@ namespace Shachihoko
             get { return GH_Exposure.primary; }
         }
 
+        public override void CreateAttributes()
+        {
+            m_attributes = new ExportGLTFAttribute(this);
+        }
+
         /// <summary>
         /// Registers all the input parameters for this component.
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGeometryParameter("Mesh", "Mesh", "", GH_ParamAccess.tree);
-            pManager.AddGenericParameter("Material", "Material", "", GH_ParamAccess.tree);
-            pManager.AddTextParameter("FolderPath", "FolderPath", "", GH_ParamAccess.item, System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)); //デフォルトでデスクトップを指定.
-            pManager.AddTextParameter("FileName", "FileName", "", GH_ParamAccess.item, "model");
-            pManager.AddBooleanParameter("Switch", "Switch", "", GH_ParamAccess.item, false);
+            if (ExportStyle == 0)
+            {
+                for (int i = 0; i < ComponentName["Static"].Count; i++)
+                {
+                    AddParameter(pManager, ComponentInputParam["Static"][i], ComponentName["Static"][i], ComponentName["Static"][i], ComponentDescription["Static"][i], ComponentGH_ParamAccess["Static"][i]);
+                    if (ComponentName["Static"][i] == "FolderPath")
+                    {
+                        pManager[i].AddVolatileData(new GH_Path(0), 0, new GH_String(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
+                    }
+                }
+            }
+            else if (ExportStyle == 1)
+            {
+                for (int i = 0; i < ComponentName["Animation"].Count; i++)
+                {
+                    AddParameter(pManager, ComponentInputParam["Animation"][i], ComponentName["Animation"][i], ComponentName["Animation"][i], ComponentDescription["Animation"][i], ComponentGH_ParamAccess["Animation"][i]);
+                    if (ComponentName["Animation"][i] == "FolderPath")
+                    {
+                        pManager[i].AddVolatileData(new GH_Path(0), 0, new GH_String(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -73,10 +95,10 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             //---<初期化＆定義>---//
             GH_Structure<IGH_GeometricGoo> ghMeshs_IGH_GeometricGoos = new GH_Structure<IGH_GeometricGoo>();
-            GH_Structure<IGH_Goo> materialBuilders_IGH_Goo = new GH_Structure<IGH_Goo>(); 
+            GH_Structure<IGH_Goo> materialBuilders_IGH_Goo = new GH_Structure<IGH_Goo>();
+            List<double> keyFrames = new List<double>();
             string folderPath = "";
             string fileName = "";
             string filePath = "";
@@ -88,62 +110,58 @@ namespace Shachihoko
 
             DataTree<VERTEX> vertexs = new DataTree<VERTEX>();
             List<MeshBuilder<VERTEX>> meshBuilders = new List<MeshBuilder<VERTEX>>();
-            int num = 0;
+            int num = 0;            
 
-            if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
-            if (!DA.GetDataTree(1, out materialBuilders_IGH_Goo)) return;
-            if (!DA.GetData(2, ref folderPath)) return;
-            if (!DA.GetData(3, ref fileName)) return;
-            if (!DA.GetData(4, ref runSwitch)) return;
-
-            filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
-
-            //---<実行>---//            
-            for (int i = 0; i < ghMeshs_IGH_GeometricGoos.Paths.Count; i++)
+            if (ExportStyle == 0)
             {
-                path = ghMeshs_IGH_GeometricGoos.Paths[i]; //pathを定義.
+                if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
+                if (!DA.GetDataTree(1, out materialBuilders_IGH_Goo)) return;
+                if (!DA.GetData(2, ref folderPath)) return;
+                if (!DA.GetData(3, ref fileName)) return;
+                if (!DA.GetData(4, ref runSwitch)) return;
 
-                //--<Errorチェック>--//
-                if(materialBuilders_IGH_Goo.PathExists(path) == false)
+                filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
+
+                //---<実行>---//            
+                for (int i = 0; i < ghMeshs_IGH_GeometricGoos.Paths.Count; i++)
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "MeshとMaterialのツリー構造が一致しません.");
+                    path = ghMeshs_IGH_GeometricGoos.Paths[i]; //pathを定義.
+
+                    //--<Errorチェック>--//
+                    if (materialBuilders_IGH_Goo.PathExists(path) == false)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "MeshとMaterialのツリー構造が一致しません.");
+                    }
+
+                    //---<IGH_GeometricGooをGHMeshに変換>---//
+                    ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(ConvertIGH_GeometricGooToGHMesh);
+
+                    //---<IGH_GooをMaterialBuilderに変換>---//
+                    materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(ConvertIGH_GooToMaterialBuilder);
+
+                    for (int j = 0; j < ghMeshs.Count; j++)
+                    {
+                        //---<GHMeshをList<List<VERTEX>>に変換>---//
+                        vertexs = ConvertGHMeshVertex(ghMeshs[j]);
+
+                        //---<MeshBuilderを作成>---//
+                        MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
+                        num += 1;
+                        meshBuilders.Add(meshBuilder);
+                    }
                 }
 
-                //---<IGH_GeometricGooをGHMeshに変換>---//
-                ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(ConvertIGH_GeometricGooToGHMesh);
-
-                //---<IGH_GooをMaterialBuilderに変換>---//
-                materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(ConvertIGH_GooToMaterialBuilder);
-
-                /*foreach (Rhino.Geometry.Mesh ghMesh in ghMeshs)
+                //---<GLTFに書き出し>---//
+                if (runSwitch)
                 {
-                    //---<GHMeshをList<List<VERTEX>>に変換>---//
-                    vertexs = ConvertGHMeshVertex(ghMesh);
-
-                    //---<MeshBuilderを作成>---//
-                    /*MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[i], num.ToString());
-                    num += 1;
-                    meshBuilders.Add(meshBuilder);
-                }*/
-
-                for (int j = 0; j < ghMeshs.Count; j++)
-                {
-                    //---<GHMeshをList<List<VERTEX>>に変換>---//
-                    vertexs = ConvertGHMeshVertex(ghMeshs[j]);
-
-                    //---<MeshBuilderを作成>---//
-                    MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
-                    num += 1;
-                    meshBuilders.Add(meshBuilder);
+                    ExportGLTF(meshBuilders, filePath);
                 }
             }
-
-            //---<GLTFに書き出し>---//
-            if (runSwitch)
+            else if(ExportStyle == 1)
             {
-                ExportGLTF(meshBuilders, filePath);
+                
             }
-        }
+        }            
 
         //---<メソッド>---//
         /// <summary>
@@ -268,6 +286,181 @@ namespace Shachihoko
 
             //---<書き出し>---//
             model.SaveGLTF(filePath + ".gltf");
+        }
+
+        ///<summary>
+        ///Inputの種類を可変にする関数.
+        /// </summary>
+        private int AddParameter(GH_InputParamManager pManager, string inputParam, string name, string nickname, string description, GH_ParamAccess accessType)
+        {
+            switch (inputParam)
+            {
+                case "Generic":
+                    return pManager.AddGenericParameter(name, nickname, description, accessType);
+                case "Geometry":
+                    return pManager.AddGeometryParameter(name, nickname, description, accessType);
+                case "Text":
+                    return pManager.AddTextParameter(name, nickname, description, accessType);
+                case "Boolean":
+                    return pManager.AddBooleanParameter(name, nickname, description, accessType);
+                case "Number":
+                    return pManager.AddNumberParameter(name, nickname, description, accessType);
+                default:
+                    return pManager.AddGenericParameter(name, nickname, description, accessType);
+            }            
+        }
+
+        //---<プロパティ>---//
+        //--<ExportStyle>--//
+        /// <summary>
+        /// 0 = Static, 1 = Animation.
+        /// </summary>
+        public int ExportStyle { get; set; }
+
+        //--<inputリスト>--//
+        public static readonly Dictionary<string, List<string>> ComponentInputParam = new Dictionary<string, List<string>>
+        {
+            {
+                "Static", new List<string>()
+                {
+                    "Geometry",
+                    "Generic",
+                    "Text",
+                    "Text",
+                    "Boolean"
+                }
+            },
+            {
+                "Animation", new List<string>()
+                {
+                    "Geometry",
+                    "Generic",
+                    "Number",
+                    "Generic",
+                    "Text",
+                    "Text",
+                    "Boolean"
+                }
+            }
+        };
+
+        public static readonly Dictionary<string, List<GH_ParamAccess>> ComponentGH_ParamAccess = new Dictionary<string, List<GH_ParamAccess>>
+        {
+            {
+                "Static", new List<GH_ParamAccess>()
+                {
+                    GH_ParamAccess.tree,
+                    GH_ParamAccess.tree,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item
+                }
+            },
+            {
+                "Animation", new List<GH_ParamAccess>()
+                {
+                    GH_ParamAccess.tree,
+                    GH_ParamAccess.tree,
+                    GH_ParamAccess.list,
+                    GH_ParamAccess.tree,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item,
+                    GH_ParamAccess.item
+                }
+            }
+        };
+
+        public static readonly Dictionary<string, List<string>> ComponentName = new Dictionary<string, List<string>>
+        {
+            {
+                "Static", new List<string>()
+                {
+                    "Mesh",
+                    "Material",
+                    "FolderPath",
+                    "FileName",
+                    "Switch"
+                }
+            },
+            {
+                "Animation", new List<string>()
+                {
+                    "Mesh",
+                    "Material",
+                    "KeyFrame",
+                    "Translation",
+                    "FolderPath",
+                    "FileName",
+                    "Switch"
+                }
+            }
+        };
+
+        public static readonly Dictionary<string, List<string>> ComponentDescription = new Dictionary<string, List<string>>
+        {
+            {
+                "Static", new List<string>()
+                {
+                    "Mesh",
+                    "Material",
+                    "FolderPath",
+                    "FileName",
+                    "Switch"
+                }
+            },
+            {
+                "Animation", new List<string>()
+                {
+                    "Mesh",
+                    "Material",
+                    "KeyFrame",
+                    "Translation",
+                    "FolderPath",
+                    "FileName",
+                    "Switch"
+                }
+            }
+        };
+
+        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        {
+            writer.SetInt32("ExportStyle", ExportStyle);
+            return base.Write(writer);
+        }
+
+        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        {
+            ExportStyle = reader.GetInt32("ExportStyle");
+            return base.Read(reader);
+        }
+
+        private void Params_ParameterChanged(object sender, GH_ParamServerEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanInsertParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        public bool CanRemoveParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        public IGH_Param CreateParameter(GH_ParameterSide side, int index)
+        {
+            return new Param_Integer();
+        }
+
+        public bool DestroyParameter(GH_ParameterSide side, int index)
+        {
+            return false;
+        }
+
+        public void VariableParameterMaintenance()
+        {
         }
 
         /// <summary>

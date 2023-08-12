@@ -60,19 +60,17 @@ namespace Shachihoko
         {
             if (ShaderType == 0)
             {
-                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][0], ComponentName["MetallicRoughness"][0], ComponentDescription["MetallicRoughness"][0], ComponentGH_ParamAccess["MetallicRoughness"][0]);
-                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][1], ComponentName["MetallicRoughness"][1], ComponentDescription["MetallicRoughness"][1], ComponentGH_ParamAccess["MetallicRoughness"][1]);
-                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][2], ComponentName["MetallicRoughness"][2], ComponentDescription["MetallicRoughness"][2], ComponentGH_ParamAccess["MetallicRoughness"][2]);
-                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][3], ComponentName["MetallicRoughness"][3], ComponentDescription["MetallicRoughness"][3], ComponentGH_ParamAccess["MetallicRoughness"][3]);
-                pManager.AddGenericParameter(ComponentName["MetallicRoughness"][4], ComponentName["MetallicRoughness"][4], ComponentDescription["MetallicRoughness"][4], ComponentGH_ParamAccess["MetallicRoughness"][4]);
+                for(int i = 0; i < ComponentName["MetallicRoughness"].Count; i++)
+                {
+                    pManager.AddGenericParameter(ComponentName["MetallicRoughness"][i], ComponentName["MetallicRoughness"][i], ComponentDescription["MetallicRoughness"][i], ComponentGH_ParamAccess["MetallicRoughness"][i]);
+                }
             }
             else if(ShaderType == 1)
             {
-                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][0], ComponentName["SpecularGlossiness"][0], ComponentDescription["SpecularGlossiness"][0], ComponentGH_ParamAccess["SpecularGlossiness"][0]);
-                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][1], ComponentName["SpecularGlossiness"][1], ComponentDescription["SpecularGlossiness"][1], ComponentGH_ParamAccess["SpecularGlossiness"][1]);
-                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][2], ComponentName["SpecularGlossiness"][2], ComponentDescription["SpecularGlossiness"][2], ComponentGH_ParamAccess["SpecularGlossiness"][2]);
-                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][3], ComponentName["SpecularGlossiness"][3], ComponentDescription["SpecularGlossiness"][3], ComponentGH_ParamAccess["SpecularGlossiness"][3]);
-                pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][4], ComponentName["SpecularGlossiness"][4], ComponentDescription["SpecularGlossiness"][4], ComponentGH_ParamAccess["SpecularGlossiness"][4]);
+                for (int i = 0; i < ComponentName["SpecularGlossiness"].Count; i++)
+                {
+                    pManager.AddGenericParameter(ComponentName["SpecularGlossiness"][i], ComponentName["SpecularGlossiness"][i], ComponentDescription["SpecularGlossiness"][i], ComponentGH_ParamAccess["SpecularGlossiness"][i]);
+                }
             }
             for (int i = 0; i < pManager.ParamCount; i++)
             {
