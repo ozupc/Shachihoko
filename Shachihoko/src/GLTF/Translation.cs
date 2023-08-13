@@ -52,9 +52,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Data", "D", "Data to be processed", GH_ParamAccess.list);
-            // Set the access property to list, which allows variable number of inputs
-            pManager[0].Access = GH_ParamAccess.list;
+            pManager.AddGenericParameter("Mesh/Keyframe", "Mesh/Keyframe", "Must be entered as a DataTree<Mesh> type; the first level of GH_Path must be set to classify by keyframe.", GH_ParamAccess.tree);
         }
 
         /// <summary>
@@ -62,6 +60,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
+            pManager.AddGenericParameter("Translation", "Translation", "Translation", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -71,7 +70,9 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            
+            GH_Structure<IGH_GeometricGoo> ghMeshs_IGH_GeometricGoos = new GH_Structure<IGH_GeometricGoo>();
+            if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
+
         }
 
         /// <summary>

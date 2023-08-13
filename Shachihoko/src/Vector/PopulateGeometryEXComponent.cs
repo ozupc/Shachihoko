@@ -13,6 +13,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 using System.Security.Cryptography;
 using GH_IO;
 using GH_IO.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 // In order to load the result of this wizard, you will also need to
 // add the output bin/ folder of this project to the list of loaded
@@ -47,7 +48,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGeometryParameter("Geometry", "G", "Geometry to populate. (Closed brep or meshe only.)", GH_ParamAccess.item);
+            pManager.AddGeometryParameter("Geometry", "G", "Geometry to populate. (Closed brep or mesh only.)", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Count", "N", "Number of points to add.", GH_ParamAccess.item, 10);
             pManager.AddIntegerParameter("Seed", "S", "Random seed for insertion.", GH_ParamAccess.item, 0);
         }
@@ -72,9 +73,7 @@ namespace Shachihoko
             int seed = 0;
             IGH_GeometricGoo geo = null;
 
-            Random r_x = new Random(seed + 0);
-            Random r_y = new Random(seed + 1);
-            Random r_z = new Random(seed + 2);
+            Random rand = new Random(seed);
 
             if (!DA.GetData(0, ref geo)) return;
             if (!DA.GetData(1, ref count)) return;
@@ -90,25 +89,9 @@ namespace Shachihoko
                     this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Geometry shoud be Closed Brep or Mesh.");
                 }
 
-                BoundingBox bb = m.GetBoundingBox(true);
-
-
-                for (int i = 0; i < count; i++)
-                {
-                    Point3d pt = new Point3d(GetRandomNumber(r_x, bb.GetCorners()[0].X, bb.GetCorners()[6].X), GetRandomNumber(r_y, bb.GetCorners()[0].Y, bb.GetCorners()[6].Y), GetRandomNumber(r_z, bb.GetCorners()[0].Z, bb.GetCorners()[6].Z));
-
-                    if (m.IsPointInside(pt, 0.01, true))
-                    {
-                        pts.Add(pt);
-                    }
-                    else
-                    {
-                        i--;
-                    }
-                }
+                pts = RandomPointsInMesh(m, count, seed);
             }
-
-            else if (geo is GH_Brep || geo is GH_Surface)
+            else if (geo is GH_Brep)
             {
                 Brep b = new Brep();
                 geo.CastTo<Brep>(out b);
@@ -118,22 +101,43 @@ namespace Shachihoko
                     this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Geometry shoud be Closed Brep or Mesh.");
                 }
 
-                BoundingBox bb = b.GetBoundingBox(true);
+                pts = RandomPointsInBrep(b, count, seed);
+            }
+            else if (geo is GH_Box)
+            {
+                //Brep b = new Brep();
+                geo.CastTo<Box>(out Box box);
+                Brep b = box.ToBrep();
 
-                for (int i = 0; i < count; i++)
+                if (!(b.IsSolid))
                 {
-                    Point3d pt = new Point3d(GetRandomNumber(r_x, bb.GetCorners()[0].X, bb.GetCorners()[6].X), GetRandomNumber(r_y, bb.GetCorners()[0].Y, bb.GetCorners()[6].Y), GetRandomNumber(r_z, bb.GetCorners()[0].Z, bb.GetCorners()[6].Z));
-                    if (b.IsPointInside(pt, 0.01, true))
+                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Geometry shoud be Closed Brep or Mesh.");
+                }
+
+                pts = RandomPointsInBrep(b, count, seed);
+            }
+            else if (geo is GH_Surface)
+            {
+                geo.CastTo<Surface>(out Surface surface);
+
+                if (surface.IsClosed(0) || surface.IsClosed(1))
+                {
+                    Brep b = Brep.CreateFromSurface(surface);
+                    geo.CastTo<Brep>(out b);
+
+                    if (!(b.IsSolid))
                     {
-                        pts.Add(pt);
+                        this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Geometry shoud be Closed Brep or Mesh.");
                     }
-                    else
-                    {
-                        i--;
-                    }
+
+                    pts = RandomPointsInBrep(b, count, seed);
+                }
+                else
+                {
+                    this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Geometry should be a closed surface or mesh.");
+                    return;
                 }
             }
-
             else
             {
                 this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Geometry shoud be Closed Brep or Mesh.");
@@ -142,9 +146,55 @@ namespace Shachihoko
             DA.SetDataList(0, pts);
         }
 
-        public double GetRandomNumber(Random random, double minimum, double maximum)
+        private List<Point3d> RandomPointsInBrep(Brep brep, int count, int seed)
         {
-            return random.NextDouble() * (maximum - minimum) + minimum;
+            Random rand = new Random(seed);
+            BoundingBox boundingBox = brep.GetBoundingBox(false);
+            List<Point3d> points = new List<Point3d>();
+
+            while (points.Count < count)
+            {
+                // Create a random point inside the bounding box of the Brep
+                Point3d randomPoint = RandomPointInBoundingBox(boundingBox, rand);
+
+                // Check if the point is inside the Brep
+                if (brep.IsPointInside(randomPoint, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance, false))
+                {
+                    points.Add(randomPoint);
+                }
+            }
+
+            return points;
+        }
+
+
+        private List<Point3d> RandomPointsInMesh(Mesh mesh, int count, int seed)
+        {
+            Random rand = new Random(seed);
+            BoundingBox boundingBox = mesh.GetBoundingBox(false);
+            List<Point3d> points = new List<Point3d>();
+
+            while (points.Count < count)
+            {
+                // Create a random point inside the bounding box of the Mesh
+                Point3d randomPoint = RandomPointInBoundingBox(boundingBox, rand);
+
+                // Check if the point is inside the Mesh
+                if (mesh.IsPointInside(randomPoint, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance, false))
+                {
+                    points.Add(randomPoint);
+                }
+            }
+
+            return points;
+        }
+
+        private Point3d RandomPointInBoundingBox(BoundingBox boundingBox, Random rand)
+        {
+            double x = rand.NextDouble() * (boundingBox.Max.X - boundingBox.Min.X) + boundingBox.Min.X;
+            double y = rand.NextDouble() * (boundingBox.Max.Y - boundingBox.Min.Y) + boundingBox.Min.Y;
+            double z = rand.NextDouble() * (boundingBox.Max.Z - boundingBox.Min.Z) + boundingBox.Min.Z;
+            return new Point3d(x, y, z);
         }
 
         /// <summary>

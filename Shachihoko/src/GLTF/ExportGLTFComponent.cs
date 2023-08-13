@@ -110,6 +110,7 @@ namespace Shachihoko
 
             DataTree<VERTEX> vertexs = new DataTree<VERTEX>();
             List<MeshBuilder<VERTEX>> meshBuilders = new List<MeshBuilder<VERTEX>>();
+            ShachihokoMethod shachihokoMethod = new ShachihokoMethod();
             int num = 0;            
 
             if (ExportStyle == 0)
@@ -134,18 +135,18 @@ namespace Shachihoko
                     }
 
                     //---<IGH_GeometricGooをGHMeshに変換>---//
-                    ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(ConvertIGH_GeometricGooToGHMesh);
+                    ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(shachihokoMethod.ConvertIGH_GeometricGooToGHMesh);
 
                     //---<IGH_GooをMaterialBuilderに変換>---//
-                    materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(ConvertIGH_GooToMaterialBuilder);
+                    materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(shachihokoMethod.ConvertIGH_GooToMaterialBuilder);
 
                     for (int j = 0; j < ghMeshs.Count; j++)
                     {
                         //---<GHMeshをList<List<VERTEX>>に変換>---//
-                        vertexs = ConvertGHMeshVertex(ghMeshs[j]);
+                        vertexs = shachihokoMethod.ConvertGHMeshVertex(ghMeshs[j]);
 
                         //---<MeshBuilderを作成>---//
-                        MeshBuilder<VERTEX> meshBuilder = CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
+                        MeshBuilder<VERTEX> meshBuilder = shachihokoMethod.CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
                         num += 1;
                         meshBuilders.Add(meshBuilder);
                     }
@@ -154,139 +155,94 @@ namespace Shachihoko
                 //---<GLTFに書き出し>---//
                 if (runSwitch)
                 {
-                    ExportGLTF(meshBuilders, filePath);
+                    shachihokoMethod.ExportGLTF(meshBuilders, filePath);
                 }
             }
             else if(ExportStyle == 1)
             {
+                if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
+                if (!DA.GetDataTree(1, out materialBuilders_IGH_Goo)) return;
+                if (!DA.GetDataList(2, keyFrames)) return;
+                if (!DA.GetData(3, ref folderPath)) return;
+                if (!DA.GetData(4, ref fileName)) return;
+                if (!DA.GetData(5, ref runSwitch)) return;
+
+                filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
+
+                // 新しいモデルを作成
+                ModelRoot model = ModelRoot.CreateModel();
+
+                // シーンとノードを追加
+                Scene scene = model.UseScene("Default");
+                Node node = scene.CreateNode("AnimatedNode");
+
                 
-            }
-        }            
 
-        //---<メソッド>---//
-        /// <summary>
-        /// IGH_GeometricGooをGHMeshに変換.
-        /// </summary>
-        private Rhino.Geometry.Mesh ConvertIGH_GeometricGooToGHMesh(IGH_GeometricGoo igh_GeometricGoo) //Convertの方法を定義.（ConvertAllで使用.）
-        {
-            Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-            igh_GeometricGoo.CastTo(out mesh);
-
-            return mesh;
-        }
-
-        /// <summary>
-        /// IGH_GooをMaterialBuilderに変換.
-        /// </summary>
-        private MaterialBuilder ConvertIGH_GooToMaterialBuilder(IGH_Goo igh_Goo) //Convertの方法を定義.（ConvertAllで使用.）
-        {
-            MaterialBuilder materialBuilder = new MaterialBuilder();
-            igh_Goo.CastTo(out materialBuilder);
-
-            return materialBuilder;
-        }
-
-        ///<summary>
-        ///GHMeshをList<List<VERTEX>>に変換.
-        /// </summary>
-        private DataTree<VERTEX> ConvertGHMeshVertex(Rhino.Geometry.Mesh mesh)
-        {
-            //---<初期化>---//
-            DataTree<VERTEX> vertexs = new DataTree<VERTEX>();
-
-            //---<GHMeshの軸変換>--// ※RhinoはZup, GLTFはYup
-            Rhino.Geometry.Plane rhinoPlane = new Rhino.Geometry.Plane(Rhino.Geometry.Plane.WorldXY);
-            Rhino.Geometry.Plane gltfPlane = new Rhino.Geometry.Plane(Rhino.Geometry.Plane.WorldZX);
-            mesh.Transform(Transform.PlaneToPlane(rhinoPlane, gltfPlane));
-
-            //---<変換>---//
-            for (int i = 0; i < mesh.Faces.Count; i++)
-            {
-                //--<初期化>--//
-                GH_Path path = new GH_Path(i);
-                MeshFace meshFace = mesh.Faces[i];
-                int indexA = meshFace.A;
-                int indexB = meshFace.B;
-                int indexC = meshFace.C;
-                Point3f pointA = mesh.Vertices[indexA];
-                Point3f pointB = mesh.Vertices[indexB];
-                Point3f pointC = mesh.Vertices[indexC];
-
-                //--<VERTEXに変換>--//
-                VERTEX vA = new VERTEX(pointA.X, pointA.Y, pointA.Z);
-                VERTEX vB = new VERTEX(pointB.X, pointB.Y, pointB.Z);
-                VERTEX vC = new VERTEX(pointC.X, pointC.Y, pointC.Z);
-
-                //--<List(子)に追加>--//
-                vertexs.Add(vA, path);
-                vertexs.Add(vB, path);
-                vertexs.Add(vC, path);
-
-                //--<四角メッシュフェイスの場合>--//
-                if (meshFace.IsQuad)
+                //---<GH_Pathの1層目のインデックスを取得>---//
+                List<int> firstLayerIndices = new List<int>();
+                foreach (GH_Path forPath in ghMeshs_IGH_GeometricGoos.Paths)
                 {
-                    //-<初期化>-//
-                    int indexD = meshFace.D;
-                    Point3f pointD = mesh.Vertices[indexD];
+                    firstLayerIndices.Add(forPath.Indices[0]);
+                }
 
-                    //-<VERTEXに変換>-//
-                    VERTEX vD = new VERTEX(pointD.X, pointD.Y, pointD.Z);
+                //---<実行>---//
+                foreach (int index in firstLayerIndices)
+                {
+                    GH_Structure<IGH_GeometricGoo> subTree = new GH_Structure<IGH_GeometricGoo>();
+                    foreach (GH_Path forPath in ghMeshs_IGH_GeometricGoos.Paths)
+                    {
+                        if (forPath.Indices[0] == index)
+                        {
+                            List<IGH_GeometricGoo> branch = ghMeshs_IGH_GeometricGoos.get_Branch(path) as List<IGH_GeometricGoo>;
+                            subTree.AppendRange(branch, forPath);
+                        }
+                    }
 
-                    //--<Listに追加>--//
-                    vertexs.Add(vD, path);
+                    for (int i = 0; i < subTree.Paths.Count; i++)
+                    {
+                        path = subTree.Paths[i]; //pathを定義.
+                        
+
+                        //--<Errorチェック>--//
+                        if (materialBuilders_IGH_Goo.PathExists(path) == false)
+                        {
+                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "MeshとMaterialのツリー構造が一致しません.");
+                        }
+
+                        //---<IGH_GeometricGooをGHMeshに変換>---//
+                        ghMeshs = subTree[path].ConvertAll(shachihokoMethod.ConvertIGH_GeometricGooToGHMesh);
+
+                        //---<キーフレームとベクトルを取得>---//
+                        //Dictionary<float, List<Vector3f>> vectorPerKeyframe = shachihokoMethod.CalculateVertexMovements(ghMeshs, keyFrames);
+
+                        //---<IGH_GooをMaterialBuilderに変換>---//
+                        materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(shachihokoMethod.ConvertIGH_GooToMaterialBuilder);
+
+                        for (int j = 0; j < ghMeshs.Count; j++)
+                        {
+                            // アニメーションの作成
+                            Animation animation = model.CreateAnimation();
+                            //animation.CreateTranslationChannel(node, (IReadOnlyDictionary<float, Vector3>)vectorPerKeyframe, true);
+
+                            //---<GHMeshをList<List<VERTEX>>に変換>---//
+                            vertexs = shachihokoMethod.ConvertGHMeshVertex(ghMeshs[j]);
+
+                            //---<MeshBuilderを作成>---//
+                            MeshBuilder<VERTEX> meshBuilder = shachihokoMethod.CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
+                            num += 1;
+                            meshBuilders.Add(meshBuilder);
+                        }
+                    }
+                }
+                    
+
+                //---<GLTFに書き出し>---//
+                if (runSwitch)
+                {
+                    shachihokoMethod.ExportGLTF(meshBuilders, filePath);
                 }
             }
-
-            //---<return>---//
-            return vertexs;
-        }
-
-        ///<summary>
-        ///List<List<VERTEX>>からMeshBuilderを作成.
-        /// </summary>
-        private MeshBuilder<VERTEX> CreateMeshBuilder(DataTree<VERTEX> vertexs, MaterialBuilder material, string meshName)
-        {
-            //---<初期化>---//
-            MeshBuilder<VERTEX> mesh = new MeshBuilder<VERTEX>(meshName);
-            PrimitiveBuilder<MaterialBuilder, VERTEX, VertexEmpty, VertexEmpty> prim = mesh.UsePrimitive(material);
-
-            //---<VERTEXの登録>---//
-            foreach (GH_Path path in vertexs.Paths)
-            {
-                if (vertexs.Branch(path).Count == 3)
-                {
-                    prim.AddTriangle(vertexs.Branch(path)[0], vertexs.Branch(path)[1], vertexs.Branch(path)[2]);
-                }
-                else if (vertexs.Branch(path).Count == 4)
-                {
-                    prim.AddQuadrangle(vertexs.Branch(path)[0], vertexs.Branch(path)[1], vertexs.Branch(path)[2], vertexs.Branch(path)[3]);
-                }
-            }
-
-            //---<return>---//
-            return mesh;
-        }
-
-        ///<summary>
-        ///List<MeshBuilder>からGLTFに書き出し.
-        /// </summary>
-        private void ExportGLTF(List<MeshBuilder<VERTEX>> meshs, string filePath)
-        {
-            //---<初期化>---//
-            SharpGLTF.Scenes.SceneBuilder scene = new SharpGLTF.Scenes.SceneBuilder();
-
-            //---<sceneの作成>---//
-            foreach (MeshBuilder<VERTEX> mesh in meshs)
-            {
-                scene.AddRigidMesh(mesh, Matrix4x4.Identity);
-            }
-
-            //---<modelの作成>---//
-            ModelRoot model = scene.ToGltf2();
-
-            //---<書き出し>---//
-            model.SaveGLTF(filePath + ".gltf");
-        }
+        }      
 
         ///<summary>
         ///Inputの種類を可変にする関数.
@@ -336,7 +292,6 @@ namespace Shachihoko
                     "Geometry",
                     "Generic",
                     "Number",
-                    "Generic",
                     "Text",
                     "Text",
                     "Boolean"
@@ -362,7 +317,6 @@ namespace Shachihoko
                     GH_ParamAccess.tree,
                     GH_ParamAccess.tree,
                     GH_ParamAccess.list,
-                    GH_ParamAccess.tree,
                     GH_ParamAccess.item,
                     GH_ParamAccess.item,
                     GH_ParamAccess.item
@@ -388,7 +342,6 @@ namespace Shachihoko
                     "Mesh",
                     "Material",
                     "KeyFrame",
-                    "Translation",
                     "FolderPath",
                     "FileName",
                     "Switch"
@@ -414,7 +367,6 @@ namespace Shachihoko
                     "Mesh",
                     "Material",
                     "KeyFrame",
-                    "Translation",
                     "FolderPath",
                     "FileName",
                     "Switch"
