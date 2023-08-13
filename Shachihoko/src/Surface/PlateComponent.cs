@@ -41,7 +41,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGeometryParameter("Shape", "S", "Brep or Mesh to plates.", GH_ParamAccess.item);
+            pManager.AddGeometryParameter("Shape", "S", "Bounding shape.\r\nBrep or Mesh to plates.", GH_ParamAccess.item);
             pManager.AddPlaneParameter("Plane", "P", "Base plane for plates.", GH_ParamAccess.item, Plane.WorldXY);
             pManager.AddIntegerParameter("Count", "C", "Number of plates.", GH_ParamAccess.item);
             pManager.AddNumberParameter("Thickness", "T", "Thickness of plates.", GH_ParamAccess.item);
@@ -96,12 +96,20 @@ namespace Shachihoko
             }
 
             List<Curve> contours = new List<Curve>();
-            if (shape is GH_Brep || shape is GH_Surface)
-            {
+            if (shape is GH_Brep || shape is GH_Surface || shape is GH_Box)
+            {                
                 foreach (Plane pl in planes)
                 {
                     Brep brep = new Brep();
-                    shape.CastTo<Brep>(out brep);
+                    if (shape is GH_Box)
+                    {
+                        shape.CastTo<Box>(out Box box);
+                        brep = box.ToBrep();
+                    }
+                    else
+                    {
+                        shape.CastTo<Brep>(out brep);
+                    }                    
                     Curve[] c = Brep.CreateContourCurves(brep, pl);
                     for (int i = 0; i < c.Length; i++)
                     {

@@ -41,9 +41,12 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntervalParameter("Range", "R", "Domain of random numeric range.", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Number", "N", "Number of random values.", GH_ParamAccess.item);
+            Interval interval = new Interval(0, 100);
+
+            pManager.AddIntervalParameter("Range", "R", "Domain of random numeric range.", GH_ParamAccess.item,interval);
+            pManager.AddIntegerParameter("Number", "N", "Number of random values.", GH_ParamAccess.item, 10);
             pManager.AddIntegerParameter("Seed", "S", "Seed of random engine.", GH_ParamAccess.item, 0);
+            pManager.AddBooleanParameter("Same Value", "Same Value", "If true, the same numbers are allowed; if false, they are not allowed.", GH_ParamAccess.item, true);
         }
 
         /// <summary>
@@ -64,19 +67,23 @@ namespace Shachihoko
             Interval domain = new Interval();
             int num = 0;
             int seed = 0;
+            bool sameValue = true;
 
             if (!DA.GetData(0, ref domain)) return;
             if (!DA.GetData(1, ref num)) return;
             if (!DA.GetData(2, ref seed)) return;
+            if (!DA.GetData(3, ref sameValue)) return;
 
-            if (domain.Length < num)
+            if (domain.Length < num && !sameValue)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Number must be smaller than Size of Range.");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Number must be smaller than Size of Range when sameValue is false.");
+                return;
             }
 
             List<int> nums = new List<int>();
-            List<int> result = new List<int>();
+            HashSet<int> usedNumbers = new HashSet<int>();
             Random rand = new Random(seed);
+
             for (int i = (int)domain.Min; i < (int)domain.Max; i++)
             {
                 nums.Add(i);
@@ -84,19 +91,21 @@ namespace Shachihoko
 
             for (int Pos = 0; Pos < num; Pos++)
             {
-                int nextPos = rand.Next(Pos, nums.Count);
+                int nextPos;
+                do
+                {
+                    nextPos = rand.Next(Pos, nums.Count);
+                } while (!sameValue && usedNumbers.Contains(nums[nextPos]));
+
+                usedNumbers.Add(nums[nextPos]);
                 int temp = nums[Pos];
                 nums[Pos] = nums[nextPos];
                 nums[nextPos] = temp;
             }
 
-            for (int i = 0; i < num; i++)
-            {
-                result.Add(nums[i]);
-            }
-
-            DA.SetDataList(0, result);
+            DA.SetDataList(0, nums.GetRange(0, num));
         }
+
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

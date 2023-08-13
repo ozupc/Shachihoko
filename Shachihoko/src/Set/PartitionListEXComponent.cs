@@ -66,7 +66,6 @@ namespace Shachihoko
             int size = 2;
             int cross = 0;
             bool wrap = false;
-            int check_listwrap = list.Count % (size - cross);
 
             if (!DA.GetDataList(0, list)) return;
             if (!DA.GetData(1, ref size)) return;
@@ -78,13 +77,9 @@ namespace Shachihoko
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Size must be bigger than CrossSize");
                 return;
             }
-            if (wrap == false && list.Count % (size - cross) != 0)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Recheck Size and CrossSize");
-                return;
-            }
 
             DataTree<object> tree = ListToTree(list, size, cross, wrap);
+
             DA.SetDataTree(0, tree);
         }
 
