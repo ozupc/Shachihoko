@@ -87,10 +87,10 @@ namespace Shachihoko
             Point3d pt2 = new Point3d(line.To.X, line.To.Y, line.To.Z);
             Point3d pt3 = new Point3d(line.To.X, line.To.Y, line.To.Z);
 
-            pt0.Transform(Transform.Translation(mover));
-            pt1.Transform(Transform.Translation(-mover));
-            pt2.Transform(Transform.Translation(-mover));
-            pt3.Transform(Transform.Translation(mover));
+            pt0.Transform(Rhino.Geometry.Transform.Translation(mover));
+            pt1.Transform(Rhino.Geometry.Transform.Translation(-mover));
+            pt2.Transform(Rhino.Geometry.Transform.Translation(-mover));
+            pt3.Transform(Rhino.Geometry.Transform.Translation(mover));
 
             List<Point3d> pts = new List<Point3d>();
             pts.Add(pt0);

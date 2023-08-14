@@ -76,8 +76,8 @@ namespace Shachihoko
             Point3d endPt = new Point3d(centerPt);
             direction.Unitize();
             direction = direction * length / 2;
-            startPt.Transform(Transform.Translation(-direction));
-            endPt.Transform(Transform.Translation(direction));
+            startPt.Transform(Rhino.Geometry.Transform.Translation(-direction));
+            endPt.Transform(Rhino.Geometry.Transform.Translation(direction));
 
             Line line = new Line(startPt, endPt);
 

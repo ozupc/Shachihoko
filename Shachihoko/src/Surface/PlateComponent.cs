@@ -89,7 +89,7 @@ namespace Shachihoko
             for (int i = 0; i < num; i++)
             {
                 min_copy += dist;
-                Transform move = Transform.Translation(plane.Normal * min_copy);
+                Rhino.Geometry.Transform move = Rhino.Geometry.Transform.Translation(plane.Normal * min_copy);
                 Plane p = new Plane(plane);
                 p.Transform(move);
                 planes.Add(p);
@@ -137,7 +137,7 @@ namespace Shachihoko
 
             foreach (Curve c in contours)
             {
-                Transform t = Transform.Translation(-plane.Normal * thick / 2);
+                Rhino.Geometry.Transform t = Rhino.Geometry.Transform.Translation(-plane.Normal * thick / 2);
                 c.Transform(t);
                 Extrusion ex = new Extrusion();
                 ex = Extrusion.Create(c, thick, true);

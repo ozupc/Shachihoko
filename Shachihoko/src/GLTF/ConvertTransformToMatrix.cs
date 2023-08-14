@@ -26,7 +26,7 @@ using SharpGLTF.Schema2;
 
 namespace Shachihoko
 {
-    public class Translation : GH_Component
+    public class ConvertTransformToMatrix : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -35,9 +35,9 @@ namespace Shachihoko
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public Translation()
-          : base("Translation", "Translation",
-            "",
+        public ConvertTransformToMatrix()
+          : base("Transform", "Transform",
+            "Converts Rhino.Geometry.Transform to System.Numerics.Matrix4x4.",
             "Shachihoko", ShachihokoMethod.Category["GLTF"])
         {
         }
@@ -52,7 +52,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Mesh/Keyframe", "Mesh/Keyframe", "Must be entered as a DataTree<Mesh> type; the first level of GH_Path must be set to classify by keyframe.", GH_ParamAccess.tree);
+            pManager.AddTransformParameter("Transform", "T", "Translate, Rotate, Scale data for each keyframe.", GH_ParamAccess.tree);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Translation", "Translation", "Translation", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Matrix", "M", "Converted matrix.\r\nIf you wish to compose a deformation matrix,\r\nenter the multiplication components in the order in which you wish to perform the deformations.", GH_ParamAccess.tree);
         }
 
         /// <summary>
@@ -70,9 +70,36 @@ namespace Shachihoko
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_Structure<IGH_GeometricGoo> ghMeshs_IGH_GeometricGoos = new GH_Structure<IGH_GeometricGoo>();
-            if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
+            GH_Structure<GH_Transform> inputTransforms = new GH_Structure<GH_Transform>();
+            if (!DA.GetDataTree(0, out inputTransforms)) return;
 
+            GH_Structure<GH_Matrix> outputMatrices = new GH_Structure<GH_Matrix>();
+
+            foreach (GH_Path path in inputTransforms.Paths)
+            {
+                GH_Path newPath = path;
+                foreach (GH_Transform transform in inputTransforms.get_Branch(path))
+                {
+                    Transform rhinoTransform = transform.Value;
+                    Matrix matrix = ConvertToMatrix(rhinoTransform);
+                    outputMatrices.Append(new GH_Matrix(matrix), newPath);
+                }
+            }
+
+            DA.SetDataTree(0, outputMatrices);
+        }
+
+        private Matrix ConvertToMatrix(Transform transform)
+        {
+            Matrix matrix = new Matrix(4, 4);
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    matrix[i, j] = transform[i, j];
+                }
+            }
+            return matrix;
         }
 
         /// <summary>

@@ -192,6 +192,9 @@ namespace Shachihoko
                 case "Number":
                     param = new Param_Number();
                     break;
+                case "Matrix":
+                    param = new Param_Matrix();
+                    break;
                 default:
                     throw new ArgumentException($"Unsupported inputParam: {inputParam}");
             }

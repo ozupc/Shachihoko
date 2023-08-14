@@ -61,7 +61,7 @@ namespace Shachihoko
             //---<GHMeshの軸変換>--// ※RhinoはZup, GLTFはYup
             Rhino.Geometry.Plane rhinoPlane = new Rhino.Geometry.Plane(Rhino.Geometry.Plane.WorldXY);
             Rhino.Geometry.Plane gltfPlane = new Rhino.Geometry.Plane(Rhino.Geometry.Plane.WorldZX);
-            mesh.Transform(Transform.PlaneToPlane(rhinoPlane, gltfPlane));
+            mesh.Transform(Rhino.Geometry.Transform.PlaneToPlane(rhinoPlane, gltfPlane));
 
             //---<変換>---//
             for (int i = 0; i < mesh.Faces.Count; i++)

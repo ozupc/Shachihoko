@@ -99,6 +99,7 @@ namespace Shachihoko
             GH_Structure<IGH_GeometricGoo> ghMeshs_IGH_GeometricGoos = new GH_Structure<IGH_GeometricGoo>();
             GH_Structure<IGH_Goo> materialBuilders_IGH_Goo = new GH_Structure<IGH_Goo>();
             List<double> keyFrames = new List<double>();
+            GH_Structure<GH_Matrix> ghMatrices = new GH_Structure<GH_Matrix>();
             string folderPath = "";
             string fileName = "";
             string filePath = "";
@@ -163,11 +164,12 @@ namespace Shachihoko
                 if (!DA.GetDataTree(0, out ghMeshs_IGH_GeometricGoos)) return;
                 if (!DA.GetDataTree(1, out materialBuilders_IGH_Goo)) return;
                 if (!DA.GetDataList(2, keyFrames)) return;
+                if (!DA.GetDataTree(3, out ghMatrices)) return;
                 if (!DA.GetData(3, ref folderPath)) return;
                 if (!DA.GetData(4, ref fileName)) return;
                 if (!DA.GetData(5, ref runSwitch)) return;
 
-                filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
+                /*filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
 
                 // 新しいモデルを作成
                 ModelRoot model = ModelRoot.CreateModel();
@@ -240,7 +242,7 @@ namespace Shachihoko
                 if (runSwitch)
                 {
                     shachihokoMethod.ExportGLTF(meshBuilders, filePath);
-                }
+                }*/
             }
         }      
 
@@ -261,6 +263,8 @@ namespace Shachihoko
                     return pManager.AddBooleanParameter(name, nickname, description, accessType);
                 case "Number":
                     return pManager.AddNumberParameter(name, nickname, description, accessType);
+                case "Matrix":
+                    return pManager.AddMatrixParameter(name, nickname, description, accessType);
                 default:
                     return pManager.AddGenericParameter(name, nickname, description, accessType);
             }            
@@ -292,6 +296,7 @@ namespace Shachihoko
                     "Geometry",
                     "Generic",
                     "Number",
+                    "Matrix",
                     "Text",
                     "Text",
                     "Boolean"
@@ -317,6 +322,7 @@ namespace Shachihoko
                     GH_ParamAccess.tree,
                     GH_ParamAccess.tree,
                     GH_ParamAccess.list,
+                    GH_ParamAccess.tree,
                     GH_ParamAccess.item,
                     GH_ParamAccess.item,
                     GH_ParamAccess.item
@@ -342,6 +348,7 @@ namespace Shachihoko
                     "Mesh",
                     "Material",
                     "KeyFrame",
+                    "Transform",
                     "FolderPath",
                     "FileName",
                     "Switch"
@@ -354,8 +361,8 @@ namespace Shachihoko
             {
                 "Static", new List<string>()
                 {
-                    "Mesh",
-                    "Material",
+                    "DataTree should be input in a simplified state.\r\nThe data structure should be the same as the \"Material\" DataTree.",
+                    "DataTree should be input in a simplified state.\r\nThe data structure should be the same as the \"Mesh\" DataTree.",
                     "FolderPath",
                     "FileName",
                     "Switch"
@@ -364,9 +371,10 @@ namespace Shachihoko
             {
                 "Animation", new List<string>()
                 {
-                    "Mesh",
-                    "Material",
+                    "DataTree should be input in a simplified state.\r\nThe data structure should be the same as the \"Material\" DataTree.",
+                    "DataTree should be input in a simplified state.\r\nThe data structure should be the same as the \"Mesh\" DataTree.",
                     "KeyFrame",
+                    "Transform",
                     "FolderPath",
                     "FileName",
                     "Switch"

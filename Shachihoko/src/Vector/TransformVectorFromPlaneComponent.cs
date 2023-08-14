@@ -75,7 +75,7 @@ namespace Shachihoko
             if (!DA.GetData(1, ref afterPlane)) return;
             if (!DA.GetData(2, ref baseVec)) return;
 
-            baseVec.Transform(Transform.PlaneToPlane(beforePlane, afterPlane));
+            baseVec.Transform(Rhino.Geometry.Transform.PlaneToPlane(beforePlane, afterPlane));
 
             DA.SetData(0, baseVec);
         }

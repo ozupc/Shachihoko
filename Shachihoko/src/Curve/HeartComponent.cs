@@ -114,7 +114,7 @@ namespace Shachihoko
             PolylineCurve poly = new PolylineCurve(pts);
             poly.MakeClosed(0.0);
 
-            poly.Transform(Transform.ChangeBasis(Plane.WorldXY, pl));
+            poly.Transform(Rhino.Geometry.Transform.ChangeBasis(Plane.WorldXY, pl));
 
             DA.SetData(0, poly);
         }
