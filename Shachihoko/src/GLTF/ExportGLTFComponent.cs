@@ -169,75 +169,9 @@ namespace Shachihoko
                 if (!DA.GetData(4, ref fileName)) return;
                 if (!DA.GetData(5, ref runSwitch)) return;
 
-                /*filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
-
-                // 新しいモデルを作成
-                ModelRoot model = ModelRoot.CreateModel();
-
-                // シーンとノードを追加
-                Scene scene = model.UseScene("Default");
-                Node node = scene.CreateNode("AnimatedNode");
-
-                
-
-                //---<GH_Pathの1層目のインデックスを取得>---//
-                List<int> firstLayerIndices = new List<int>();
-                foreach (GH_Path forPath in ghMeshs_IGH_GeometricGoos.Paths)
-                {
-                    firstLayerIndices.Add(forPath.Indices[0]);
-                }
-
-                //---<実行>---//
-                foreach (int index in firstLayerIndices)
-                {
-                    GH_Structure<IGH_GeometricGoo> subTree = new GH_Structure<IGH_GeometricGoo>();
-                    foreach (GH_Path forPath in ghMeshs_IGH_GeometricGoos.Paths)
-                    {
-                        if (forPath.Indices[0] == index)
-                        {
-                            List<IGH_GeometricGoo> branch = ghMeshs_IGH_GeometricGoos.get_Branch(path) as List<IGH_GeometricGoo>;
-                            subTree.AppendRange(branch, forPath);
-                        }
-                    }
-
-                    for (int i = 0; i < subTree.Paths.Count; i++)
-                    {
-                        path = subTree.Paths[i]; //pathを定義.
-                        
-
-                        //--<Errorチェック>--//
-                        if (materialBuilders_IGH_Goo.PathExists(path) == false)
-                        {
-                            AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "MeshとMaterialのツリー構造が一致しません.");
-                        }
-
-                        //---<IGH_GeometricGooをGHMeshに変換>---//
-                        ghMeshs = subTree[path].ConvertAll(shachihokoMethod.ConvertIGH_GeometricGooToGHMesh);
-
-                        //---<キーフレームとベクトルを取得>---//
-                        //Dictionary<float, List<Vector3f>> vectorPerKeyframe = shachihokoMethod.CalculateVertexMovements(ghMeshs, keyFrames);
-
-                        //---<IGH_GooをMaterialBuilderに変換>---//
-                        materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(shachihokoMethod.ConvertIGH_GooToMaterialBuilder);
-
-                        for (int j = 0; j < ghMeshs.Count; j++)
-                        {
-                            // アニメーションの作成
-                            Animation animation = model.CreateAnimation();
-                            //animation.CreateTranslationChannel(node, (IReadOnlyDictionary<float, Vector3>)vectorPerKeyframe, true);
-
-                            //---<GHMeshをList<List<VERTEX>>に変換>---//
-                            vertexs = shachihokoMethod.ConvertGHMeshVertex(ghMeshs[j]);
-
-                            //---<MeshBuilderを作成>---//
-                            MeshBuilder<VERTEX> meshBuilder = shachihokoMethod.CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
-                            num += 1;
-                            meshBuilders.Add(meshBuilder);
-                        }
-                    }
-                }
+                filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
                     
-
+                /*
                 //---<GLTFに書き出し>---//
                 if (runSwitch)
                 {
