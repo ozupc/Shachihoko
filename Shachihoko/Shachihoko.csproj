@@ -14,10 +14,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
+    <PackageReference Include="Grasshopper" Version="7.32.23221.10241" IncludeAssets="compile;build" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0026" />
-    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0026" />
+    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0030" />
+    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0030" />
   </ItemGroup>
   
   <ItemGroup>

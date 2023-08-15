@@ -134,15 +134,30 @@ namespace Shachihoko
         ///<summary>
         ///List<MeshBuilder>からGLTFに書き出し.
         /// </summary>
-        public void ExportGLTF(List<MeshBuilder<VERTEX>> meshs, string filePath)
+        public void ExportGLTF(List<MeshBuilder<VERTEX>> meshs, string filePath, List<Dictionary<double, Matrix4x4>> motions = null)
         {
             //---<初期化>---//
             SharpGLTF.Scenes.SceneBuilder scene = new SharpGLTF.Scenes.SceneBuilder();
 
             //---<sceneの作成>---//
-            foreach (MeshBuilder<VERTEX> mesh in meshs)
+            for (int i = 0; i < meshs.Count; i++)
             {
-                scene.AddRigidMesh(mesh, Matrix4x4.Identity);
+                var mesh = meshs[i];
+                var node = scene.AddRigidMesh(mesh, Matrix4x4.Identity); // メッシュをノードとして追加
+                /*if (motions != null && i < motions.Count) // アニメーションがある場合
+                {
+                    var motion = motions[i]; // メッシュに対応するアニメーション
+                    var animation = scene.UseSceneAnimation($"Animation{i}"); // アニメーションを作成
+                    foreach (var pair in motion) // キーフレームごとに
+                    {
+                        var time = pair.Key; // キーフレームの秒数
+                        var matrix = pair.Value; // 変換行列
+                        Matrix4x4.Decompose(matrix, out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation); // 変換行列を分解
+                        animation.SetScale(node, time, scale); // スケールのアニメーションを設定
+                        animation.SetRotation(node, time, rotation); // 回転のアニメーションを設定
+                        animation.SetTranslation(node, time, translation); // 移動のアニメーションを設定
+                    }
+                }*/
             }
 
             //---<modelの作成>---//
@@ -152,28 +167,31 @@ namespace Shachihoko
             model.SaveGLTF(filePath + ".gltf");
         }
 
+
         ///<summary>
-        ///List<Rhino.Geometry.Mesh>から移動ベクトルを書き出し.
+        ///(List<GH_Matrix>からキーフレームごとの辞書型に変換.
         /// </summary>
-        public Dictionary<float, List<Vector3f>> CalculateVertexMovements(List<Rhino.Geometry.Mesh> meshList, List<double> keyframes)
+        public Dictionary<double, Matrix4x4> ConvertMatrices(List<GH_Matrix> ghMatrices, List<double> keyFrames)
         {
-            Dictionary<float, List<Vector3f>> result = new Dictionary<float, List<Vector3f>>();
-
-            for (int i = 0; i < meshList.Count - 1; i++) // Loop through each keyframe except the last one
+            if (ghMatrices.Count != keyFrames.Count)
             {
-                float currentKeyframe = (float)keyframes[i];
-                List<Vector3f> keyframeResult = new List<Vector3f>();
+                throw new ArgumentException("ghMatrices and keyFrames must have the same count.");
+            }
 
-                Rhino.Geometry.Mesh currentMesh = meshList[i];
-                Rhino.Geometry.Mesh nextMesh = meshList[i + 1];
+            Dictionary<double, Matrix4x4> result = new Dictionary<double, Matrix4x4>();
+            for (int i = 0; i < ghMatrices.Count; i++)
+            {
+                double key = keyFrames[i];
+                GH_Matrix ghMatrix = ghMatrices[i];
 
-                for (int k = 0; k < currentMesh.Vertices.Count; k++) // Loop through each vertex in the mesh
-                {
-                    Vector3f movementVector = (Vector3f)(nextMesh.Vertices[k] - currentMesh.Vertices[k]);
-                    keyframeResult.Add(movementVector);
-                }
+                // Assuming the GH_Matrix is a 4x4 matrix
+                Matrix4x4 matrix = new Matrix4x4(
+                    (float)ghMatrix.Value[0, 0], (float)ghMatrix.Value[0, 1], (float)ghMatrix.Value[0, 2], (float)ghMatrix.Value[0, 3],
+                    (float)ghMatrix.Value[1, 0], (float)ghMatrix.Value[1, 1], (float)ghMatrix.Value[1, 2], (float)ghMatrix.Value[1, 3],
+                    (float)ghMatrix.Value[2, 0], (float)ghMatrix.Value[2, 1], (float)ghMatrix.Value[2, 2], (float)ghMatrix.Value[2, 3],
+                    (float)ghMatrix.Value[3, 0], (float)ghMatrix.Value[3, 1], (float)ghMatrix.Value[3, 2], (float)ghMatrix.Value[3, 3]);
 
-                result[currentKeyframe] = keyframeResult;
+                result.Add(key, matrix);
             }
 
             return result;

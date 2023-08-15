@@ -111,6 +111,7 @@ namespace Shachihoko
 
             DataTree<VERTEX> vertexs = new DataTree<VERTEX>();
             List<MeshBuilder<VERTEX>> meshBuilders = new List<MeshBuilder<VERTEX>>();
+            List<Dictionary<double, Matrix4x4>> transformationMatrixs = new List<Dictionary<double, Matrix4x4>>();
             ShachihokoMethod shachihokoMethod = new ShachihokoMethod();
             int num = 0;            
 
@@ -170,7 +171,41 @@ namespace Shachihoko
                 if (!DA.GetData(5, ref runSwitch)) return;
 
                 filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = パス区切り文字.
-                    
+
+                ModelRoot model = ModelRoot.CreateModel();
+                Scene scene = model.UseScene("Default");
+
+                for (int i = 0; i < ghMeshs_IGH_GeometricGoos.Paths.Count; i++)
+                {
+                    path = ghMeshs_IGH_GeometricGoos.Paths[i]; //pathを定義.
+
+                    //--<Errorチェック>--//
+                    if (materialBuilders_IGH_Goo.PathExists(path) == false)
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "MeshとMaterialのツリー構造が一致しません.");
+                    }
+
+                    //---<IGH_GeometricGooをGHMeshに変換>---//
+                    ghMeshs = ghMeshs_IGH_GeometricGoos[path].ConvertAll(shachihokoMethod.ConvertIGH_GeometricGooToGHMesh);
+
+                    //---<IGH_GooをMaterialBuilderに変換>---//
+                    materialBuilders = materialBuilders_IGH_Goo[path].ConvertAll(shachihokoMethod.ConvertIGH_GooToMaterialBuilder);
+
+                    //---<List<GH_Matrix>をDictionary<double, Matrix4x4>・・・keyframe, 変換行列に変換>---//
+                    transformationMatrixs.Add(shachihokoMethod.ConvertMatrices((List<GH_Matrix>)ghMatrices.get_Branch(path), keyFrames));
+
+                    for (int j = 0; j < ghMeshs.Count; j++)
+                    {
+                        //---<GHMeshをList<List<VERTEX>>に変換>---//
+                        vertexs = shachihokoMethod.ConvertGHMeshVertex(ghMeshs[j]);
+
+                        //---<MeshBuilderを作成>---//
+                        MeshBuilder<VERTEX> meshBuilder = shachihokoMethod.CreateMeshBuilder(vertexs, materialBuilders[j], num.ToString());
+                        num += 1;
+                        meshBuilders.Add(meshBuilder);
+                    }
+                }
+
                 /*
                 //---<GLTFに書き出し>---//
                 if (runSwitch)
