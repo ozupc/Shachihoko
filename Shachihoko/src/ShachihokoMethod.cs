@@ -22,6 +22,8 @@ using SharpGLTF.Geometry.VertexTypes;
 using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
 using SharpGLTF.Materials;
 using SharpGLTF.Schema2;
+using SharpGLTF.Scenes;
+using SharpGLTF.Animations;
 
 namespace Shachihoko
 {
@@ -142,22 +144,33 @@ namespace Shachihoko
             //---<sceneの作成>---//
             for (int i = 0; i < meshs.Count; i++)
             {
-                var mesh = meshs[i];
-                var node = scene.AddRigidMesh(mesh, Matrix4x4.Identity); // メッシュをノードとして追加
-                /*if (motions != null && i < motions.Count) // アニメーションがある場合
+                if (motions != null && i < motions.Count) // アニメーションがある場合
                 {
-                    var motion = motions[i]; // メッシュに対応するアニメーション
-                    var animation = scene.UseSceneAnimation($"Animation{i}"); // アニメーションを作成
-                    foreach (var pair in motion) // キーフレームごとに
+                    NodeBuilder node = new NodeBuilder("test");
+                    foreach (double num in motions[i].Keys)
                     {
-                        var time = pair.Key; // キーフレームの秒数
-                        var matrix = pair.Value; // 変換行列
-                        Matrix4x4.Decompose(matrix, out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation); // 変換行列を分解
-                        animation.SetScale(node, time, scale); // スケールのアニメーションを設定
-                        animation.SetRotation(node, time, rotation); // 回転のアニメーションを設定
-                        animation.SetTranslation(node, time, translation); // 移動のアニメーションを設定
+                        Matrix4x4.Decompose(motions[i][num], out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation);
+                        List<(float, Vector3)> scales = new List<(float, Vector3)>();
+                        List<(float, System.Numerics.Quaternion)> rotations = new List<(float, System.Numerics.Quaternion)>();
+                        List<(float, Vector3)> translations = new List<(float, Vector3)>();
+
+                        scales.Add((float)num, scale);
+                        rotations.Add((float)num, rotation);
+                        translations.Add((float)num, translation);
+                        var curveSampler_scales = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)scales);
+                        var curveSampler_rotations = CurveSampler.CreateSampler((IEnumerable<(float, System.Numerics.Quaternion)>)rotations);
+                        var curveSampler_translations = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)translations);
+
+                        node.SetScaleTrack(num.ToString(), curveSampler_scales);
+                        node.SetRotationTrack(num.ToString(), curveSampler_rotations);
+                        node.SetTranslationTrack(num.ToString(), curveSampler_translations);
                     }
-                }*/
+                    scene.AddRigidMesh(meshs[i], node);
+                }
+                else
+                {
+                    scene.AddRigidMesh(meshs[i], Matrix4x4.Identity);
+                }
             }
 
             //---<modelの作成>---//

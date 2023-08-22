@@ -166,9 +166,9 @@ namespace Shachihoko
                 if (!DA.GetDataTree(1, out materialBuilders_IGH_Goo)) return;
                 if (!DA.GetDataList(2, keyFrames)) return;
                 if (!DA.GetDataTree(3, out ghMatrices)) return;
-                if (!DA.GetData(3, ref folderPath)) return;
-                if (!DA.GetData(4, ref fileName)) return;
-                if (!DA.GetData(5, ref runSwitch)) return;
+                if (!DA.GetData(4, ref folderPath)) return;
+                if (!DA.GetData(5, ref fileName)) return;
+                if (!DA.GetData(6, ref runSwitch)) return;
 
                 filePath = folderPath + Path.DirectorySeparatorChar + fileName; //System.IO.Path.DirectorySeparatorChar = ÉpÉXãÊêÿÇËï∂éö.
 
@@ -205,13 +205,12 @@ namespace Shachihoko
                         meshBuilders.Add(meshBuilder);
                     }
                 }
-
-                /*
+                
                 //---<GLTFÇ…èëÇ´èoÇµ>---//
                 if (runSwitch)
                 {
-                    shachihokoMethod.ExportGLTF(meshBuilders, filePath);
-                }*/
+                    shachihokoMethod.ExportGLTF(meshBuilders, filePath, transformationMatrixs);
+                }
             }
         }      
 

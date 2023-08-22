@@ -2,3 +2,6 @@
 ・SolveInstance()のelse if(ExportStyle == 1)つまりアニメーションが有の時の挙動を作成する。
 ・Transform（Translate, Scale, Rotate）をRhino.Geometry.Matrixで入力する。（設定済み）
 ・GLTFをMatrix（System.Numerics.Matrix4x4）で動かす方法を調べ実装する。→Matrixで動かうことはできなさそうなので、行列を分解することを検討。
+
+8/22
+・(IEnumerable<(float, Vector3)>)scalesのキャストでエラー発生。
