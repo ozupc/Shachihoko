@@ -147,24 +147,26 @@ namespace Shachihoko
                 if (motions != null && i < motions.Count) // アニメーションがある場合
                 {
                     NodeBuilder node = new NodeBuilder("test");
+                    List<(float, Vector3)> scales = new List<(float, Vector3)>();
+                    List<(float, System.Numerics.Quaternion)> rotations = new List<(float, System.Numerics.Quaternion)>();
+                    List<(float, Vector3)> translations = new List<(float, Vector3)>();
                     foreach (double num in motions[i].Keys)
                     {
                         Matrix4x4.Decompose(motions[i][num], out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation);
-                        List<(float, Vector3)> scales = new List<(float, Vector3)>();
-                        List<(float, System.Numerics.Quaternion)> rotations = new List<(float, System.Numerics.Quaternion)>();
-                        List<(float, Vector3)> translations = new List<(float, Vector3)>();
 
-                        scales.Add((float)num, scale);
-                        rotations.Add((float)num, rotation);
-                        translations.Add((float)num, translation);
-                        var curveSampler_scales = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)scales);
-                        var curveSampler_rotations = CurveSampler.CreateSampler((IEnumerable<(float, System.Numerics.Quaternion)>)rotations);
-                        var curveSampler_translations = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)translations);
+                        //translation = new Vector3(100f, 0f, 0f);
 
-                        node.SetScaleTrack(num.ToString(), curveSampler_scales);
-                        node.SetRotationTrack(num.ToString(), curveSampler_rotations);
-                        node.SetTranslationTrack(num.ToString(), curveSampler_translations);
+                        scales.Add(((float)num * 1000f, scale)); // ミリ秒単位に変換
+                        rotations.Add(((float)num * 1000f, rotation)); // ミリ秒単位に変換
+                        translations.Add(((float)num * 1000f, translation)); // ミリ秒単位に変換
                     }
+                    var curveSampler_scales = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)scales);
+                    var curveSampler_rotations = CurveSampler.CreateSampler((IEnumerable<(float, System.Numerics.Quaternion)>)rotations);
+                    var curveSampler_translations = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)translations);
+
+                    node.SetScaleTrack("scale", curveSampler_scales); // トラック名は固定
+                    node.SetRotationTrack("rotation", curveSampler_rotations); // トラック名は固定
+                    node.SetTranslationTrack("translation", curveSampler_translations); // トラック名は固定
                     scene.AddRigidMesh(meshs[i], node);
                 }
                 else
@@ -179,6 +181,8 @@ namespace Shachihoko
             //---<書き出し>---//
             model.SaveGLTF(filePath + ".gltf");
         }
+
+
 
 
         ///<summary>

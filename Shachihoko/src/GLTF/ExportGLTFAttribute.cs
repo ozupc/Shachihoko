@@ -214,11 +214,11 @@ namespace Shachihoko
             if (name == "FolderPath")
             {
                 // 特定のパラメータタイプにキャストしてから初期値を設定
-                var pathParam = param as GH_Param<GH_String>;
+                var pathParam = param as GH_PersistentParam<GH_String>;
                 if (pathParam != null)
                 {
                     pathParam.ClearData();
-                    pathParam.AddVolatileData(new GH_Path(0), 0, new GH_String(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
+                    pathParam.SetPersistentData((Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
                 }
             }
         }

@@ -4,4 +4,7 @@
 ・GLTFをMatrix（System.Numerics.Matrix4x4）で動かす方法を調べ実装する。→Matrixで動かうことはできなさそうなので、行列を分解することを検討。
 
 8/22
-・(IEnumerable<(float, Vector3)>)scalesのキャストでエラー発生。
+・(IEnumerable<(float, Vector3)>)scalesのキャストでエラー発生。→解決済み
+
+8/23
+・書き出しはできるようになったがアニメーションとしては機能していない。キーフレームになっていない？またアニメーションがScale, Rotate, Translateでそれぞれバラバラになってしまっている。
