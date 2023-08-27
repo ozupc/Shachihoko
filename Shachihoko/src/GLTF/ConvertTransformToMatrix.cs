@@ -60,7 +60,7 @@ namespace Shachihoko
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Matrix", "M", "Converted matrix.\r\nIf you wish to compose a deformation matrix,\r\nenter the multiplication components in the order in which you wish to perform the deformations.", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Matrix", "M", "Converted matrix.\r\nIf you wish to compose a deformation matrix,\r\nenter the multiplication components in the **reverse** order in which you wish to perform the deformations.", GH_ParamAccess.tree);
         }
 
         /// <summary>

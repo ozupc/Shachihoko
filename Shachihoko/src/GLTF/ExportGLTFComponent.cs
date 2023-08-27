@@ -22,6 +22,7 @@ using SharpGLTF.Geometry.VertexTypes;
 using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
 using SharpGLTF.Materials;
 using SharpGLTF.Schema2;
+using Grasshopper.Kernel.Types.Transforms;
 
 
 namespace Shachihoko
@@ -66,6 +67,10 @@ namespace Shachihoko
                     {
                         pManager[i].AddVolatileData(new GH_Path(0), 0, new GH_String(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
                     }
+                    if (ComponentName["Animation"][i] == "FileName")
+                    {
+                        pManager[i].AddVolatileData(new GH_Path(0), 0, "Model");
+                    }
                 }
             }
             else if (ExportStyle == 1)
@@ -76,6 +81,10 @@ namespace Shachihoko
                     if (ComponentName["Animation"][i] == "FolderPath")
                     {
                         pManager[i].AddVolatileData(new GH_Path(0), 0, new GH_String(Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
+                    }
+                    if (ComponentName["Animation"][i] == "FileName")
+                    {
+                        pManager[i].AddVolatileData(new GH_Path(0), 0, "Model");
                     }
                 }
             }

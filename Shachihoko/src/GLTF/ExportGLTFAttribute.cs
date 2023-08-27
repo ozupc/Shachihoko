@@ -221,6 +221,16 @@ namespace Shachihoko
                     pathParam.SetPersistentData((Environment.GetFolderPath(Environment.SpecialFolder.Desktop)));
                 }
             }
+            if (name == "FileName")
+            {
+                // 特定のパラメータタイプにキャストしてから初期値を設定
+                var pathParam = param as GH_PersistentParam<GH_String>;
+                if (pathParam != null)
+                {
+                    pathParam.ClearData();
+                    pathParam.SetPersistentData("Model");
+                }
+            }
         }
     }
 }

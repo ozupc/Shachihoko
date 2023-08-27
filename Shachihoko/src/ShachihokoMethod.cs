@@ -136,53 +136,116 @@ namespace Shachihoko
         ///<summary>
         ///List<MeshBuilder>からGLTFに書き出し.
         /// </summary>
-        public void ExportGLTF(List<MeshBuilder<VERTEX>> meshs, string filePath, List<Dictionary<double, Matrix4x4>> motions = null)
+        public void ExportGLTF(List<MeshBuilder<VERTEX>> meshes, string filePath, List<Dictionary<double, Matrix4x4>> motions = null)
         {
-            //---<初期化>---//
-            SharpGLTF.Scenes.SceneBuilder scene = new SharpGLTF.Scenes.SceneBuilder();
+            // シーンの初期化
+            var scene = InitializeScene();
 
-            //---<sceneの作成>---//
-            for (int i = 0; i < meshs.Count; i++)
+            // 座標変換行列の事前計算
+            Matrix4x4 ZtoY = CreateZtoYMatrix();
+            Matrix4x4 YtoZ = Matrix4x4.Transpose(ZtoY);
+
+            // 各メッシュに対する処理
+            for (int i = 0; i < meshes.Count; i++)
             {
-                if (motions != null && i < motions.Count) // アニメーションがある場合
+                if (motions != null && i < motions.Count)
                 {
-                    NodeBuilder node = new NodeBuilder("test");
-                    List<(float, Vector3)> scales = new List<(float, Vector3)>();
-                    List<(float, System.Numerics.Quaternion)> rotations = new List<(float, System.Numerics.Quaternion)>();
-                    List<(float, Vector3)> translations = new List<(float, Vector3)>();
-                    foreach (double num in motions[i].Keys)
-                    {
-                        Matrix4x4.Decompose(motions[i][num], out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation);
-
-                        //translation = new Vector3(100f, 0f, 0f);
-
-                        scales.Add(((float)num * 1000f, scale)); // ミリ秒単位に変換
-                        rotations.Add(((float)num * 1000f, rotation)); // ミリ秒単位に変換
-                        translations.Add(((float)num * 1000f, translation)); // ミリ秒単位に変換
-                    }
-                    var curveSampler_scales = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)scales);
-                    var curveSampler_rotations = CurveSampler.CreateSampler((IEnumerable<(float, System.Numerics.Quaternion)>)rotations);
-                    var curveSampler_translations = CurveSampler.CreateSampler((IEnumerable<(float, Vector3)>)translations);
-
-                    node.SetScaleTrack("scale", curveSampler_scales); // トラック名は固定
-                    node.SetRotationTrack("rotation", curveSampler_rotations); // トラック名は固定
-                    node.SetTranslationTrack("translation", curveSampler_translations); // トラック名は固定
-                    scene.AddRigidMesh(meshs[i], node);
+                    // アニメーションがある場合、ノードを作成してアニメーションを適用
+                    NodeBuilder node = CreateAnimatedNode(i, motions[i], ZtoY, YtoZ);
+                    scene.AddRigidMesh(meshes[i], node);
                 }
                 else
                 {
-                    scene.AddRigidMesh(meshs[i], Matrix4x4.Identity);
+                    // アニメーションがない場合、デフォルトの変換行列を使用
+                    scene.AddRigidMesh(meshes[i], Matrix4x4.Identity);
                 }
             }
 
-            //---<modelの作成>---//
-            ModelRoot model = scene.ToGltf2();
-
-            //---<書き出し>---//
-            model.SaveGLTF(filePath + ".gltf");
+            // モデルの保存
+            SaveModel(scene, filePath);
         }
 
+        // シーンを初期化する
+        private SharpGLTF.Scenes.SceneBuilder InitializeScene()
+        {
+            return new SharpGLTF.Scenes.SceneBuilder();
+        }
 
+        // ZtoY変換行列を作成する
+        private Matrix4x4 CreateZtoYMatrix()
+        {
+            return new Matrix4x4(
+                1, 0, 0, 0,
+                0, 0, -1, 0,
+                0, 1, 0, 0,
+                0, 0, 0, 1
+            );
+        }
+
+        // アニメーション付きのノードを作成する
+        private NodeBuilder CreateAnimatedNode(int index, Dictionary<double, Matrix4x4> motionDict, Matrix4x4 ZtoY, Matrix4x4 YtoZ)
+        {
+            // ノードの初期設定
+            NodeBuilder node = new NodeBuilder($"node_{index}");
+            Matrix4x4 baseMatrix = Matrix4x4.Identity;
+            var scales = new List<(float, Vector3)>();
+            var rotations = new List<(float, System.Numerics.Quaternion)>();
+            var translations = new List<(float, Vector3)>();
+
+            // 各フレームでの変換行列を適用
+            foreach (var num in motionDict.Keys)
+            {
+                // 座標変換
+                Matrix4x4 motionMatrix = ApplyCoordinateTransformations(motionDict[num], ZtoY, YtoZ);
+
+                // ベース行列の更新
+                baseMatrix = Matrix4x4.Multiply(baseMatrix, motionMatrix);
+
+                // スケール、回転、移動の抽出
+                ExtractTransforms(baseMatrix, motionMatrix, out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation);
+
+                scales.Add(((float)num, scale));
+                rotations.Add(((float)num, rotation));
+                translations.Add(((float)num, translation));
+            }
+
+            // アニメーショントラックをノードに割り当て
+            AssignTracksToNode(node, scales, rotations, translations);
+
+            return node;
+        }
+
+        // 座標変換行列を適用する
+        private Matrix4x4 ApplyCoordinateTransformations(Matrix4x4 matrix, Matrix4x4 ZtoY, Matrix4x4 YtoZ)
+        {
+            return Matrix4x4.Multiply(ZtoY, Matrix4x4.Multiply(matrix, YtoZ));
+        }
+
+        // 変換行列からスケール、回転、移動を抽出する
+        private void ExtractTransforms(Matrix4x4 baseMatrix, Matrix4x4 motionMatrix, out Vector3 scale, out System.Numerics.Quaternion rotation, out Vector3 translation)
+        {
+            Matrix4x4.Invert(motionMatrix, out Matrix4x4 invertMatrix);
+            Matrix4x4 diffMatrix = Matrix4x4.Multiply(baseMatrix, invertMatrix);
+            Matrix4x4.Decompose(Matrix4x4.Transpose(diffMatrix), out scale, out rotation, out translation);
+        }
+
+        // ノードにアニメーショントラックを割り当てる
+        private void AssignTracksToNode(NodeBuilder node, List<(float, Vector3)> scales, List<(float, System.Numerics.Quaternion)> rotations, List<(float, Vector3)> translations)
+        {
+            node.SetScaleTrack($"{node.Name}_scale_track", CurveSampler.CreateSampler(scales));
+            node.SetRotationTrack($"{node.Name}_rotation_track", CurveSampler.CreateSampler(rotations));
+            node.SetTranslationTrack($"{node.Name}_translation_track", CurveSampler.CreateSampler(translations));
+        }
+
+        // モデルを保存する
+        private void SaveModel(SharpGLTF.Scenes.SceneBuilder scene, string filePath)
+        {
+            ModelRoot model = scene.ToGltf2();
+            model.SaveGLTF($"{filePath}.gltf");
+        }
+        ///<summary>
+        ///ここまでがExportGLTF()のためのメソッド
+        /// </summary>
 
 
         ///<summary>
@@ -213,9 +276,6 @@ namespace Shachihoko
 
             return result;
         }
-
-
-
 
         //---<辞書>---//
         public static readonly Dictionary<string, string> Category = new Dictionary<string, string>
