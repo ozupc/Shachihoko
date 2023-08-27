@@ -241,7 +241,7 @@ namespace Shachihoko
         private void SaveModel(SharpGLTF.Scenes.SceneBuilder scene, string filePath)
         {
             ModelRoot model = scene.ToGltf2();
-            model.SaveGLTF($"{filePath}.gltf");
+            model.SaveGLB($"{filePath}.glb");
         }
         ///<summary>
         ///ここまでがExportGLTF()のためのメソッド
